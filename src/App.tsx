@@ -177,8 +177,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/estetica" element={<Home segment="estetica" />} />
-      <Route path="/saude-fitness" element={<Home segment="saude_fitness" />} />
+      <Route path="/estetica" element={<Home key="estetica" segment="estetica" />} />
+      <Route path="/saude-fitness" element={<Home key="saude_fitness" segment="saude_fitness" />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/planos" element={<Planos />} />
