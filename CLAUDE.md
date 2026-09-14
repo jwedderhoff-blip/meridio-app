@@ -129,6 +129,26 @@ Hooks disponíveis:
 beta, fora do fluxo padrão (agendamento + vagas/turmas). Liberado manualmente pelo
 superadmin em Super Admin → Estabelecimentos → editar → "Recursos beta".
 
+## Auditoria de segurança (2026-09-14)
+
+Achado crítico: `establishments`, `professionals`, `professional_services`,
+`services`, `service_schedules`, `clients` e `appointments` têm policies
+definidas em migrations antigas, mas o `enable row level security` dessas
+tabelas não está versionado (foi feito manualmente no painel antes desta
+convenção de sempre colar SQL no chat). Rodar
+`20260914_security_audit_rls.sql` liga o RLS nelas (idempotente, seguro
+mesmo se já estiver ligado) e devolve uma query de conferência — deve vir
+zero linhas.
+
+Outros pontos verificados: um `.env` chegou a ser commitado no histórico do
+git (removido depois), mas era só o template com placeholders, nenhum
+segredo real vazou. Nenhum uso de `dangerouslySetInnerHTML`/XSS encontrado.
+`payment-webhook` revalida o pagamento contra a API do Mercado Pago em vez
+de confiar no corpo da notificação. Verificar no painel do Supabase se a
+função `payment-webhook` está com "Enforce JWT verification" desligado
+(senão o Mercado Pago não consegue notificar e pagamentos nunca confirmam
+sozinhos).
+
 ## Superadmin: entrar no painel de um cliente
 
 Super Admin → Estabelecimentos → ícone "Entrar no painel" (LogIn) leva o
