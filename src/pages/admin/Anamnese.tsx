@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { HeartPulse, Search, Copy, Check, MessageCircle, AlertTriangle, Eye } from 'lucide-react'
+import { HeartPulse, Search, Copy, Check, MessageCircle, AlertTriangle, Eye, Printer, Clock } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useEstablishment } from '../../hooks/useEstablishment'
 import { useClients } from '../../hooks/useClients'
@@ -9,8 +10,9 @@ import { useHealthForms, type HealthFormRow } from '../../hooks/useHealthForms'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { Modal } from '../../components/ui/Modal'
+import { LifestyleChart } from '../../components/admin/LifestyleChart'
 import { formatPhone } from '../../lib/utils'
-import { PARQ_QUESTIONS, HEALTH_HISTORY, type AnamneseAnswers } from '../../lib/anamnese'
+import { PARQ_QUESTIONS, HEALTH_HISTORY, computeLifestyleScores, type AnamneseAnswers } from '../../lib/anamnese'
 import type { Client } from '../../types'
 
 function linkFor(token: string) {
@@ -112,12 +114,34 @@ function AnswersModal({ form, client, onClose }: { form: HealthFormRow | null; c
     <Modal open={!!form} onClose={onClose} title={client ? `Anamnese — ${client.name}` : 'Anamnese'}>
       {form && (
         <div className="space-y-5 max-h-[70vh] overflow-y-auto pr-1">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs text-gray-400 flex items-center gap-1.5">
+              <Clock size={13} />
+              {form.signed_at
+                ? `Preenchida em ${format(new Date(form.signed_at), "d 'de' MMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}`
+                : 'Ainda não preenchida'}
+            </p>
+            <Link
+              to={`/admin/anamnese/${form.id}/imprimir`}
+              target="_blank"
+              rel="noreferrer"
+              className="shrink-0 inline-flex items-center gap-1.5 text-xs font-medium text-brand hover:underline"
+            >
+              <Printer size={14} /> Imprimir para entrevista
+            </Link>
+          </div>
+
           {form.parq_alert && (
             <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 flex items-start gap-2">
               <AlertTriangle size={16} className="shrink-0 mt-0.5" />
               Alguma resposta do PAR-Q foi "Sim" — recomenda-se avaliação médica antes da prática.
             </div>
           )}
+
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Perfil de estilo de vida</p>
+            <LifestyleChart scores={computeLifestyleScores(a)} />
+          </div>
 
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Identificação</p>

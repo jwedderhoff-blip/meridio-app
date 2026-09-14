@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { HeartPulse, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { Button } from '../components/ui/Button'
@@ -66,6 +68,7 @@ export default function Anamnese() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
+  const [submittedAt, setSubmittedAt] = useState<Date | null>(null)
 
   useEffect(() => {
     if (!token) return
@@ -114,6 +117,7 @@ export default function Anamnese() {
     })
     setSubmitting(false)
     if (err) { setError(err.message); return }
+    setSubmittedAt(new Date())
     setDone(true)
   }
 
@@ -147,6 +151,11 @@ export default function Anamnese() {
               ? 'Obrigado! Suas informações foram enviadas com sucesso.'
               : 'Esta ficha já foi preenchida. Se precisar atualizar algo, fale com a equipe.'}
           </p>
+          {done && submittedAt && (
+            <p className="text-xs text-gray-400 mt-3">
+              Enviado em {format(submittedAt, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+            </p>
+          )}
         </div>
       </div>
     )
