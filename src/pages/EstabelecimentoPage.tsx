@@ -24,7 +24,7 @@ const CATEGORY_HERO: Record<Establishment['category'], string> = {
   manicure: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1200&auto=format&fit=crop&q=80',
   estetica: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1200&auto=format&fit=crop&q=80',
   beleza: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1200&auto=format&fit=crop&q=80',
-  pilates: '/pilates-aparelhos.jpg',
+  pilates: '/pilates-aparelhos.jpeg',
   aulas_coletivas: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1200&auto=format&fit=crop&q=80',
   danca: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1200&auto=format&fit=crop&q=80',
   lutas: 'https://images.unsplash.com/photo-1555597408-26bc8e548a46?w=1200&auto=format&fit=crop&q=80',
@@ -103,7 +103,7 @@ const SERVICE_RULES: { keywords: string[]; icon: LucideIcon; bg: string; text: s
   {
     keywords: ['pilates', 'yoga', 'alongamento', 'stretching'],
     icon: Dumbbell, bg: 'bg-brand-soft', text: 'text-brand',
-    img: '/pilates-aparelhos.jpg',
+    img: '/pilates-aparelhos.jpeg',
   },
   {
     keywords: ['academia', 'musculação', 'funcional', 'crossfit', 'treino', 'fitness'],
