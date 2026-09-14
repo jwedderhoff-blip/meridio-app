@@ -428,8 +428,8 @@ export default function EstabelecimentoPage() {
 
       {/* ── Lista de serviços ── */}
       <div className="max-w-lg mx-auto px-4 py-8">
-        <h2 className="font-display text-2xl tracking-tight text-ink mb-1">Serviços Oferecidos</h2>
-        <p className="text-sm text-gray-400 mb-5">Toque em um serviço para ver detalhes e agendar</p>
+        <h2 className="font-display text-2xl tracking-tight text-ink mb-1">Nossos serviços para você</h2>
+        <p className="text-sm text-gray-400 mb-5">Escolha com carinho o que combina com você e toque para ver os detalhes e agendar</p>
 
         {activeServices.length === 0 ? (
           <p className="text-center text-gray-400 py-10">Nenhum serviço disponível.</p>
