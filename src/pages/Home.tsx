@@ -369,26 +369,53 @@ export default function Home({ segment }: { segment?: SegLine } = {}) {
           borderBottom: scrolled ? `1px solid ${LINE}` : '1px solid transparent',
         }}
       >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="font-display text-xl tracking-tight transition-colors duration-500" style={{ color: scrolled ? INK : '#fff' }}>
+        <div className="max-w-6xl mx-auto px-6 h-16 sm:h-20 flex items-center justify-between">
+          <Link
+            to="/"
+            className="font-display tracking-tight transition-colors duration-500 flex items-center gap-2"
+            style={{ color: scrolled ? INK : '#fff', fontSize: 'clamp(1.375rem, 2.4vw, 1.75rem)' }}
+          >
+            <span
+              className="w-2.5 h-2.5 rounded-full shrink-0"
+              style={{ background: `linear-gradient(135deg, ${HUES.indigo}, ${HUES.rose})` }}
+            />
             Meridio
           </Link>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 sm:gap-5">
             {dedicated ? (
-              <Link to="/" className="text-sm font-medium transition-colors duration-500 hidden sm:block" style={{ color: scrolled ? INK_SOFT : 'rgba(255,255,255,0.85)' }}>
-                Ver outros segmentos
+              <Link
+                to="/"
+                className="text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 hidden sm:block hover:opacity-90"
+                style={{
+                  color: scrolled ? INK_SOFT : '#fff',
+                  background: scrolled ? 'rgba(20,19,28,0.06)' : 'rgba(255,255,255,0.14)',
+                  border: `1px solid ${scrolled ? LINE : 'rgba(255,255,255,0.35)'}`,
+                }}
+              >
+                ← Ver outros segmentos
               </Link>
             ) : (
-              <div className="hidden sm:flex items-center gap-4">
-                <Link to="/estetica" className="text-sm font-medium transition-colors duration-500" style={{ color: scrolled ? INK_SOFT : 'rgba(255,255,255,0.85)' }}>
+              <div className="hidden sm:flex items-center gap-2 p-1 rounded-full" style={{
+                background: scrolled ? '#efece5' : 'rgba(255,255,255,0.12)',
+                border: `1px solid ${scrolled ? 'transparent' : 'rgba(255,255,255,0.25)'}`,
+              }}>
+                <Link
+                  to="/estetica"
+                  className="text-sm font-semibold px-4 py-2 rounded-full transition-all duration-300 hover:opacity-90"
+                  style={{ color: scrolled ? INK : '#fff', background: scrolled ? '#fff' : 'rgba(255,255,255,0.18)', boxShadow: scrolled ? '0 1px 3px rgba(20,19,28,.12)' : 'none' }}
+                >
                   Estética
                 </Link>
-                <Link to="/saude-fitness" className="text-sm font-medium transition-colors duration-500" style={{ color: scrolled ? INK_SOFT : 'rgba(255,255,255,0.85)' }}>
+                <Link
+                  to="/saude-fitness"
+                  className="text-sm font-semibold px-4 py-2 rounded-full transition-all duration-300 hover:opacity-90"
+                  style={{ color: scrolled ? INK : '#fff', background: scrolled ? '#fff' : 'rgba(255,255,255,0.18)', boxShadow: scrolled ? '0 1px 3px rgba(20,19,28,.12)' : 'none' }}
+                >
                   Saúde &amp; Fitness
                 </Link>
               </div>
             )}
-            <Link to="/planos" className="text-sm font-medium transition-colors duration-500" style={{ color: scrolled ? INK_SOFT : 'rgba(255,255,255,0.85)' }}>
+            <Link to="/planos" className="text-sm font-medium transition-colors duration-500 hidden sm:block" style={{ color: scrolled ? INK_SOFT : 'rgba(255,255,255,0.85)' }}>
               Planos
             </Link>
             {session ? (
