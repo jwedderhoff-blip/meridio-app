@@ -43,9 +43,15 @@ export default function AdminLayout() {
   const visibleNav = navItems
     .filter((i) => !i.beta || establishment?.cash_beta_enabled)
     .filter((i) => !isViewer || i.viewer)
-  const { establishments } = useEstablishments(user?.id)
+  const { establishments: ownEstablishments } = useEstablishments(user?.id)
   const { applyEstablishment } = useTheme()
   const navigate = useNavigate()
+
+  // No modo "entrar no painel do cliente" o trocador deve mostrar só esse
+  // cliente — trocar aqui não pode voltar para os estabelecimentos do
+  // próprio superadmin, o que confundiria os dois contextos.
+  const isAdminView = role === 'admin'
+  const establishments = isAdminView ? [] : ownEstablishments
 
   // Tema e cor vêm do estabelecimento ativo. Quem administra mais de um vê os
   // dois trocarem ao alternar, sem nada do anterior sobrando.
@@ -70,7 +76,6 @@ export default function AdminLayout() {
     navigate('/login')
   }
 
-  const isAdminView = role === 'admin'
   const exitAdminView = () => {
     clearAdminViewEstablishmentId()
     navigate('/superadmin/estabelecimentos')

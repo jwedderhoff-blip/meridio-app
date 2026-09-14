@@ -58,17 +58,36 @@ export function useEstablishment(userId: string | undefined) {
       const { data: { user } } = await supabase.auth.getUser()
       const email = user?.email?.toLowerCase()
 
-      // 1) Estabelecimentos que o usuário é dono
-      const owned = await supabase
-        .from('establishments')
-        .select('*')
-        .eq('owner_id', userId)
-        .order('created_at', { ascending: false })
+      let list: { est: Establishment; role: EstablishmentRole }[] = []
+      let ownedError: string | null = null
 
-      let list: { est: Establishment; role: EstablishmentRole }[] =
-        (owned.data ?? []).map((e) => ({ est: e as Establishment, role: 'owner' as const }))
+      // 1) "Entrar no painel do cliente" (Super Admin → Estabelecimentos) tem
+      // prioridade: é uma ação explícita, e o superadmin também pode ser dono
+      // dos próprios estabelecimentos — sem essa prioridade, o passo abaixo
+      // (dono) sempre venceria e o botão nunca levaria ao cliente certo.
+      const adminViewId = getAdminViewEstablishmentId()
+      if (adminViewId) {
+        const est = await supabase.from('establishments').select('*').eq('id', adminViewId).maybeSingle()
+        if (est.data) {
+          list = [{ est: est.data as Establishment, role: 'admin' as const }]
+        } else {
+          // Não é mais admin, ou o estabelecimento sumiu — limpa para não travar no login normal.
+          clearAdminViewEstablishmentId()
+        }
+      }
 
-      // 2) Se não é dono de nenhum, procura acessos de visualizador pelo e-mail
+      // 2) Estabelecimentos que o usuário é dono
+      if (list.length === 0) {
+        const owned = await supabase
+          .from('establishments')
+          .select('*')
+          .eq('owner_id', userId)
+          .order('created_at', { ascending: false })
+        ownedError = owned.error?.message ?? null
+        list = (owned.data ?? []).map((e) => ({ est: e as Establishment, role: 'owner' as const }))
+      }
+
+      // 3) Se não é dono de nenhum, procura acessos de visualizador pelo e-mail
       if (list.length === 0 && email) {
         const mem = await supabase
           .from('establishment_members')
@@ -81,23 +100,8 @@ export function useEstablishment(userId: string | undefined) {
         }
       }
 
-      // 3) Ainda nada? O superadmin pode ter entrado no painel de um cliente
-      // para ajudar a configurar (Super Admin → Estabelecimentos → Entrar no
-      // painel). Vale só para quem realmente é admin — a policy admin_all
-      // no banco é quem garante isso; aqui só evitamos a consulta à toa.
-      const adminViewId = list.length === 0 ? getAdminViewEstablishmentId() : null
-      if (adminViewId) {
-        const est = await supabase.from('establishments').select('*').eq('id', adminViewId).maybeSingle()
-        if (est.data) {
-          list = [{ est: est.data as Establishment, role: 'admin' as const }]
-        } else {
-          // Não é mais admin, ou o estabelecimento sumiu — limpa para não travar no login normal.
-          clearAdminViewEstablishmentId()
-        }
-      }
-
       if (cancelled) return
-      if (owned.error) setError(owned.error.message)
+      if (ownedError) setError(ownedError)
       if (list.length > 0) {
         const savedId = getSelectedEstablishmentId()
         const selected = list.find((x) => x.est.id === savedId) ?? list[0]
