@@ -131,24 +131,24 @@ function AnswersModal({ form, client, onClose }: { form: HealthFormRow | null; c
             </Link>
           </div>
 
-          {form.parq_alert && (
-            <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 flex items-start gap-2">
-              <AlertTriangle size={16} className="shrink-0 mt-0.5" />
-              Alguma resposta do PAR-Q foi "Sim" — recomenda-se avaliação médica antes da prática.
-            </div>
-          )}
-
-          <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Perfil de estilo de vida</p>
-            <LifestyleChart scores={computeLifestyleScores(a)} />
-          </div>
-
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Identificação</p>
             <p className="text-sm text-gray-800">{a.nome} {a.idade && `· ${a.idade} anos`} {a.sexo && `· ${a.sexo}`}</p>
             <p className="text-xs text-gray-500">{a.telefone} {a.email && `· ${a.email}`}</p>
             {(a.peso || a.altura) && <p className="text-xs text-gray-500">{a.peso && `${a.peso}kg`} {a.altura && `· ${a.altura}m`}</p>}
             {a.emerg_nome && <p className="text-xs text-gray-500">Emergência: {a.emerg_nome} — {a.emerg_telefone}</p>}
+          </div>
+
+          {form.parq_alert && (
+            <p className="flex items-center gap-1.5 text-xs text-amber-700">
+              <AlertTriangle size={13} className="shrink-0" />
+              PAR-Q com "Sim" — recomenda-se avaliação médica antes da prática.
+            </p>
+          )}
+
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Perfil de estilo de vida</p>
+            <LifestyleChart scores={computeLifestyleScores(a)} />
           </div>
 
           <div>

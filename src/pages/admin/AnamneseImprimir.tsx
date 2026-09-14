@@ -112,12 +112,6 @@ export default function AnamneseImprimir() {
             </div>
           </header>
 
-          {row.parq_alert && (
-            <div className="rounded-xl bg-amber-50 border-2 border-amber-400 px-4 py-3 text-sm text-amber-900 font-medium mb-6">
-              ⚠ Alguma resposta do PAR-Q foi "Sim" — recomenda-se avaliação médica antes da prática.
-            </div>
-          )}
-
           <PrintSection title="Identificação">
             <p className="text-sm text-gray-800">
               <strong>{a.nome ?? row.clients?.name}</strong> {a.idade && `· ${a.idade} anos`} {a.sexo && `· ${a.sexo}`}
@@ -126,6 +120,12 @@ export default function AnamneseImprimir() {
             {(a.peso || a.altura) && <p className="text-sm text-gray-600">{a.peso && `${a.peso}kg`} {a.altura && `· ${a.altura}m`}</p>}
             {a.emerg_nome && <p className="text-sm text-gray-600">Emergência: {a.emerg_nome} — {a.emerg_telefone}</p>}
           </PrintSection>
+
+          {row.parq_alert && (
+            <p className="flex items-center gap-1.5 text-sm text-amber-700 mb-6">
+              ⚠ PAR-Q com "Sim" — recomenda-se avaliação médica antes da prática.
+            </p>
+          )}
 
           <PrintSection title="Perfil de estilo de vida">
             <LifestyleChart scores={computeLifestyleScores(a)} />
