@@ -52,7 +52,21 @@ export const ROTINA_OPTIONS = ['Predominantemente sentado', 'Predominantemente e
  * respostas — vira o gráfico de barras mostrado ao aluno/painel. Escala
  * única (magnitude), sem cor por categoria: é a mesma métrica em 5 eixos.
  */
-export interface LifestyleScore { key: string; label: string; value: number }
+export type LifestyleBand = 'good' | 'warning' | 'serious'
+
+export interface LifestyleScore { key: string; label: string; value: number; band: LifestyleBand; bandLabel: string }
+
+export const LIFESTYLE_BAND_META: Record<LifestyleBand, { label: string; color: string }> = {
+  good: { label: 'Bom', color: '#0ca30c' },
+  warning: { label: 'Regular', color: '#eda100' },
+  serious: { label: 'Atenção', color: '#e34948' },
+}
+
+function bandFor(value: number): LifestyleBand {
+  if (value >= 70) return 'good'
+  if (value >= 40) return 'warning'
+  return 'serious'
+}
 
 export function computeLifestyleScores(a: AnamneseAnswers): LifestyleScore[] {
   const condicionamentoMap: Record<string, number> = {
@@ -73,13 +87,18 @@ export function computeLifestyleScores(a: AnamneseAnswers): LifestyleScore[] {
   else if (a.alcool === 'Ocasionalmente') habitos -= 10
   habitos = Math.max(0, habitos)
 
-  return [
+  const raw: { key: string; label: string; value: number }[] = [
     { key: 'atividade', label: 'Atividade física', value: atividade },
     { key: 'sono', label: 'Sono', value: sono },
     { key: 'estresse', label: 'Estresse (invertido)', value: estresse },
     { key: 'agua', label: 'Hidratação', value: agua },
     { key: 'habitos', label: 'Hábitos (fumo/álcool)', value: habitos },
   ]
+
+  return raw.map((s) => {
+    const band = bandFor(s.value)
+    return { ...s, band, bandLabel: LIFESTYLE_BAND_META[band].label }
+  })
 }
 
 export interface AnamneseAnswers {
