@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { format, startOfMonth, endOfMonth } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Search, Download, User, ChevronDown, ChevronUp, MessageCircle, Calendar, GraduationCap, Wallet, Check, RotateCcw, Trash2, UserPlus, Merge } from 'lucide-react'
+import { Search, Download, User, ChevronDown, ChevronUp, MessageCircle, Calendar, GraduationCap, Wallet, Check, RotateCcw, Trash2, UserPlus, Merge, Pencil } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useEstablishment } from '../../hooks/useEstablishment'
 import { useClients } from '../../hooks/useClients'
@@ -15,6 +15,7 @@ import { Badge } from '../../components/ui/Badge'
 import { formatPhone, formatCurrency } from '../../lib/utils'
 import NewClientModal from '../../components/admin/NewClientModal'
 import MergeClientsModal from '../../components/admin/MergeClientsModal'
+import EditClientModal from '../../components/admin/EditClientModal'
 import type { Appointment, Client } from '../../types'
 
 function useClientAppointments(clientId: string | null, establishmentId: string | undefined, month: string) {
@@ -58,10 +59,12 @@ function ClientRow({
   client,
   establishmentId,
   onDelete,
+  onEdit,
 }: {
   client: Client
   establishmentId: string | undefined
   onDelete?: (id: string) => Promise<{ error: string | null }>
+  onEdit?: (client: Client) => void
 }) {
   const [open, setOpen] = useState(false)
   const [deleteErr, setDeleteErr] = useState<string | null>(null)
@@ -132,6 +135,15 @@ function ClientRow({
           <p className="text-xs text-gray-400 hidden sm:block">
             desde {format(new Date(client.created_at), "d 'de' MMM yyyy", { locale: ptBR })}
           </p>
+          {onEdit && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onEdit(client) }}
+              title="Editar cliente"
+              className="p-1.5 rounded-lg text-gray-300 hover:text-indigo-600 hover:bg-indigo-50 transition"
+            >
+              <Pencil size={15} />
+            </button>
+          )}
           {onDelete && (
             <button
               onClick={handleDelete}
@@ -295,10 +307,11 @@ export default function Clientes() {
   const { user } = useAuth()
   const { establishment, role } = useEstablishment(user?.id)
   const canDelete = role === 'owner'
-  const { clients, loading, exportCsv, deleteClient, createClient, refetch } = useClients(establishment?.id)
+  const { clients, loading, exportCsv, deleteClient, createClient, updateClient, refetch } = useClients(establishment?.id)
   const [search, setSearch] = useState('')
   const [newOpen, setNewOpen] = useState(false)
   const [mergeOpen, setMergeOpen] = useState(false)
+  const [editingClient, setEditingClient] = useState<Client | null>(null)
 
   const filtered = clients.filter(
     (c) =>
@@ -342,6 +355,12 @@ export default function Clientes() {
         clients={clients}
         onMerged={() => refetch()}
       />
+      <EditClientModal
+        open={!!editingClient}
+        onClose={() => setEditingClient(null)}
+        client={editingClient}
+        updateClient={updateClient}
+      />
 
       <div className="mb-4">
         <Input
@@ -368,6 +387,7 @@ export default function Clientes() {
                   client={client}
                   establishmentId={establishment?.id}
                   onDelete={canDelete ? deleteClient : undefined}
+                  onEdit={canDelete ? setEditingClient : undefined}
                 />
               ))}
             </ul>

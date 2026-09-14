@@ -66,6 +66,18 @@ export function useClients(establishmentId: string | undefined) {
     return { client: data as Client | null, error: error?.message ?? null }
   }
 
+  const updateClient = async (id: string, updates: Partial<Omit<Client, 'id' | 'establishment_id' | 'created_at'>>) => {
+    if (isDemo) {
+      setClients((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)))
+      return { client: clients.find((c) => c.id === id) ?? null, error: null }
+    }
+    const { data, error } = await supabase.from('clients').update(updates).eq('id', id).select().single()
+    if (!error && data) {
+      setClients((prev) => prev.map((c) => (c.id === id ? (data as Client) : c)))
+    }
+    return { client: (data as Client | null), error: error?.message ?? null }
+  }
+
   const deleteClient = async (id: string) => {
     const { error: delErr } = await supabase.from('clients').delete().eq('id', id)
     if (delErr) {
@@ -96,5 +108,5 @@ export function useClients(establishmentId: string | undefined) {
     URL.revokeObjectURL(url)
   }
 
-  return { clients, loading, error, refetch: fetchClients, createClient, deleteClient, exportCsv }
+  return { clients, loading, error, refetch: fetchClients, createClient, updateClient, deleteClient, exportCsv }
 }
