@@ -3,11 +3,13 @@ import {
   useAllEstablishments,
   type SuperEstablishment,
 } from '../../hooks/useSuperAdmin'
+import { useNavigate } from 'react-router-dom'
 import {
   CheckCircle, XCircle, Clock, Search, ExternalLink,
-  Edit, X, Building2,
+  Edit, X, Building2, LogIn,
 } from 'lucide-react'
 import { CATEGORY_LABELS } from '../../lib/segments'
+import { setAdminViewEstablishmentId } from '../../hooks/useEstablishment'
 
 const STATUS_LABELS: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
   active:    { label: 'Ativo',    color: 'bg-green-100 text-green-700',  icon: CheckCircle },
@@ -212,6 +214,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 // ── Página principal ──────────────────────────────────────────────────────────
 export default function SuperEstabelecimentos() {
   const { establishments, loading, updateStatus, updateEstablishment } = useAllEstablishments()
+  const navigate = useNavigate()
   const [search, setSearch]     = useState('')
   const [updating, setUpdating] = useState<string | null>(null)
   const [editing, setEditing]   = useState<SuperEstablishment | null>(null)
@@ -233,6 +236,14 @@ export default function SuperEstabelecimentos() {
     setUpdating(id)
     await updateStatus(id, status)
     setUpdating(null)
+  }
+
+  // Entra no painel do cliente como superadmin, para ajudar a configurar
+  // serviços, horários, turmas etc. Fica marcado com uma faixa "Modo Super
+  // Admin" no topo do painel, com botão para sair.
+  const enterEstablishment = (id: string) => {
+    setAdminViewEstablishmentId(id)
+    navigate('/admin')
   }
 
   return (
@@ -308,6 +319,14 @@ export default function SuperEstabelecimentos() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-end gap-2">
+                            {/* Entrar no painel para ajudar a configurar */}
+                            <button
+                              onClick={() => enterEstablishment(e.id)}
+                              className="p-1.5 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition"
+                              title="Entrar no painel"
+                            >
+                              <LogIn size={14} />
+                            </button>
                             {/* Editar */}
                             <button
                               onClick={() => setEditing(e)}

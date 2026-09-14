@@ -498,7 +498,7 @@ export default function Configuracoes() {
       </div>
 
       {/* ── Login dos professores (somente leitura) ── */}
-      {role === 'owner' && establishment && (
+      {(role === 'owner' || role === 'admin') && establishment && (
         <ViewerAccessCard establishmentId={establishment.id} />
       )}
     </div>

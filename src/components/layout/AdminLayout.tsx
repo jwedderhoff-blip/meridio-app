@@ -12,13 +12,14 @@ import {
   ListChecks,
   Wallet,
   Banknote,
+  ShieldAlert,
   ChevronDown,
   ArrowLeftRight,
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
-import { useEstablishment, setSelectedEstablishmentId } from '../../hooks/useEstablishment'
+import { useEstablishment, setSelectedEstablishmentId, clearAdminViewEstablishmentId } from '../../hooks/useEstablishment'
 import { useEstablishments } from '../../hooks/useEstablishments'
 import { CATEGORY_LABELS, CATEGORY_ICONS } from '../../lib/segments'
 
@@ -67,6 +68,13 @@ export default function AdminLayout() {
   const handleSignOut = async () => {
     await signOut()
     navigate('/login')
+  }
+
+  const isAdminView = role === 'admin'
+  const exitAdminView = () => {
+    clearAdminViewEstablishmentId()
+    navigate('/superadmin/estabelecimentos')
+    window.location.reload()
   }
 
   const CategoryIcon = CATEGORY_ICONS[establishment?.category ?? 'outro']
@@ -186,7 +194,23 @@ export default function AdminLayout() {
 
       {/* Main content */}
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-20 bg-white border-b border-gray-200 flex items-center gap-3 px-4 h-14">
+        {isAdminView && (
+          <div className="sticky top-0 z-30 bg-amber-500 text-white text-sm px-4 py-2 flex items-center justify-between gap-3">
+            <span className="flex items-center gap-2 min-w-0">
+              <ShieldAlert size={16} className="shrink-0" />
+              <span className="truncate">
+                Modo Super Admin — editando <strong>{establishment?.name}</strong>
+              </span>
+            </span>
+            <button
+              onClick={exitAdminView}
+              className="shrink-0 text-xs font-semibold bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition"
+            >
+              Sair
+            </button>
+          </div>
+        )}
+        <header className="sticky z-20 bg-white border-b border-gray-200 flex items-center gap-3 px-4 h-14" style={{ top: isAdminView ? '36px' : 0 }}>
           <button
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition"

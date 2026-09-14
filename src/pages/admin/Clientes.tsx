@@ -306,7 +306,8 @@ function ClientRow({
 export default function Clientes() {
   const { user } = useAuth()
   const { establishment, role } = useEstablishment(user?.id)
-  const canDelete = role === 'owner'
+  // Dono e superadmin (ajudando a configurar) podem excluir/editar/mesclar.
+  const canDelete = role === 'owner' || role === 'admin'
   const { clients, loading, exportCsv, deleteClient, createClient, updateClient, refetch } = useClients(establishment?.id)
   const [search, setSearch] = useState('')
   const [newOpen, setNewOpen] = useState(false)
@@ -329,7 +330,7 @@ export default function Clientes() {
             <UserPlus size={16} />
             Novo cliente
           </Button>
-          {role === 'owner' && (
+          {canDelete && (
             <Button variant="secondary" size="sm" onClick={() => setMergeOpen(true)}>
               <Merge size={16} />
               Mesclar

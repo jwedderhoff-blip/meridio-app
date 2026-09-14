@@ -14,7 +14,24 @@ export function setSelectedEstablishmentId(id: string) {
   localStorage.setItem(STORAGE_KEY, id)
 }
 
-export type EstablishmentRole = 'owner' | 'viewer'
+// Modo "entrar no painel do cliente": o superadmin escolhe um estabelecimento
+// em Super Admin → Estabelecimentos para ajudar a configurar. Fica numa chave
+// separada da seleção normal do dono para não se misturar com ela.
+const ADMIN_VIEW_KEY = 'adminViewEstablishmentId'
+
+export function getAdminViewEstablishmentId() {
+  return localStorage.getItem(ADMIN_VIEW_KEY)
+}
+
+export function setAdminViewEstablishmentId(id: string) {
+  localStorage.setItem(ADMIN_VIEW_KEY, id)
+}
+
+export function clearAdminViewEstablishmentId() {
+  localStorage.removeItem(ADMIN_VIEW_KEY)
+}
+
+export type EstablishmentRole = 'owner' | 'viewer' | 'admin'
 
 export function useEstablishment(userId: string | undefined) {
   const [establishment, setEstablishment] = useState<Establishment | null>(null)
@@ -61,6 +78,21 @@ export function useEstablishment(userId: string | undefined) {
         if (ids.length > 0) {
           const ests = await supabase.from('establishments').select('*').in('id', ids)
           list = (ests.data ?? []).map((e) => ({ est: e as Establishment, role: 'viewer' as const }))
+        }
+      }
+
+      // 3) Ainda nada? O superadmin pode ter entrado no painel de um cliente
+      // para ajudar a configurar (Super Admin → Estabelecimentos → Entrar no
+      // painel). Vale só para quem realmente é admin — a policy admin_all
+      // no banco é quem garante isso; aqui só evitamos a consulta à toa.
+      const adminViewId = list.length === 0 ? getAdminViewEstablishmentId() : null
+      if (adminViewId) {
+        const est = await supabase.from('establishments').select('*').eq('id', adminViewId).maybeSingle()
+        if (est.data) {
+          list = [{ est: est.data as Establishment, role: 'admin' as const }]
+        } else {
+          // Não é mais admin, ou o estabelecimento sumiu — limpa para não travar no login normal.
+          clearAdminViewEstablishmentId()
         }
       }
 

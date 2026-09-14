@@ -129,6 +129,19 @@ Hooks disponíveis:
 beta, fora do fluxo padrão (agendamento + vagas/turmas). Liberado manualmente pelo
 superadmin em Super Admin → Estabelecimentos → editar → "Recursos beta".
 
+## Superadmin: entrar no painel de um cliente
+
+Super Admin → Estabelecimentos → ícone "Entrar no painel" (LogIn) leva o
+superadmin direto para `/admin` operando aquele estabelecimento (`role: 'admin'`
+em `useEstablishment`), para ajudar a configurar serviços/turmas/horários.
+Uma faixa amarela "Modo Super Admin" fica fixa no topo do painel, com botão
+"Sair". Implementado via `adminViewEstablishmentId` no localStorage (chave
+separada da seleção normal do dono) + policies `admin_all` em
+`working_hours`, `service_schedules`, `clients`, `appointments` e
+`establishment_members` (as demais já existiam). Não usa impersonação de
+login real — o superadmin opera com a própria sessão, autorizado pelas
+policies `is_super_admin()`.
+
 ## Landing pages por segmento
 
 `/` é a landing geral (ambas as linhas). `/estetica` e `/saude-fitness` são landings
