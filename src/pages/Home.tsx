@@ -45,6 +45,7 @@ const HERO_IMAGES = [
   { src: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1600&auto=format&fit=crop&q=80', label: 'Centro de Estética', tint: HUES.plum, line: 'estetica' as SegLine },
   { src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1600&auto=format&fit=crop&q=80', label: 'Estúdio de Pilates', tint: HUES.sage, line: 'saude_fitness' as SegLine },
   { src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1600&auto=format&fit=crop&q=80', label: 'Academia', tint: HUES.indigo, line: 'saude_fitness' as SegLine },
+  { src: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1600&auto=format&fit=crop&q=80', label: 'Lutas & Artes Marciais', tint: HUES.clay, line: 'saude_fitness' as SegLine },
 ]
 
 /** Cópia (headline, subtítulo, CTA) específica de cada landing dedicada. */
@@ -130,22 +131,24 @@ const stats = [
 ]
 
 const categories: { label: string; examples: string[]; img: string; color: string; line: SegLine }[] = [
-  { label: 'Salão de Beleza', examples: ['Corte, escova e coloração', 'Manicure e pedicure'], img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=75', color: HUES.rose, line: 'estetica' },
+  // Estética — salão, barbearia, unhas, massagem
+  { label: 'Salão de Beleza', examples: ['Corte, escova e coloração', 'Hidratação e reconstrução capilar'], img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=75', color: HUES.rose, line: 'estetica' },
   { label: 'Barbearia', examples: ['Corte masculino e barba', 'Tratamento capilar'], img: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&auto=format&fit=crop&q=75', color: HUES.brass, line: 'estetica' },
-  { label: 'Serviços de Beleza', examples: ['Unhas e nail design', 'Cílios, sobrancelhas e micropigmentação'], img: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&auto=format&fit=crop&q=75', color: HUES.plum, line: 'estetica' },
-  { label: 'Centro de Estética', examples: ['Limpeza de pele e depilação', 'Massagem e drenagem'], img: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&auto=format&fit=crop&q=75', color: HUES.rose, line: 'estetica' },
-  { label: 'Estúdio de Pilates', examples: ['Pilates individual e em grupo', 'Avaliação postural'], img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&auto=format&fit=crop&q=75', color: HUES.sage, line: 'saude_fitness' },
-  { label: 'Aulas Coletivas', examples: ['Balé, dança e zumba', 'Jiu-jitsu, karatê e artes marciais'], img: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=600&auto=format&fit=crop&q=75', color: HUES.indigo, line: 'saude_fitness' },
-  { label: 'Personal / Treino', examples: ['Personal trainer', 'Treino funcional e musculação'], img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=75', color: HUES.indigo, line: 'saude_fitness' },
-  { label: 'Avaliação Física', examples: ['Bioimpedância e antropometria', 'Prescrição de treino'], img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&auto=format&fit=crop&q=75', color: HUES.clay, line: 'saude_fitness' },
+  { label: 'Manicure & Unhas', examples: ['Unhas em gel e nail design', 'Alongamento e esmaltação'], img: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&auto=format&fit=crop&q=75', color: HUES.plum, line: 'estetica' },
+  { label: 'Estética & Massagem', examples: ['Limpeza de pele e depilação', 'Massagem relaxante e drenagem linfática'], img: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&auto=format&fit=crop&q=75', color: HUES.rose, line: 'estetica' },
+  // Saúde & Fitness — academia, personal, lutas, avaliação, nutrição
+  { label: 'Academia & Personal', examples: ['Treino funcional e musculação', 'Personal trainer e elaboração de treinos'], img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=75', color: HUES.indigo, line: 'saude_fitness' },
+  { label: 'Lutas & Artes Marciais', examples: ['Jiu-jitsu, karatê e boxe', 'Turmas por faixa etária e nível'], img: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=600&auto=format&fit=crop&q=75', color: HUES.clay, line: 'saude_fitness' },
+  { label: 'Pilates & Dança', examples: ['Pilates individual e em grupo', 'Balé, dança e zumba'], img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&auto=format&fit=crop&q=75', color: HUES.sage, line: 'saude_fitness' },
+  { label: 'Avaliação Física', examples: ['Bioimpedância e antropometria', 'Prescrição de treino personalizada'], img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&auto=format&fit=crop&q=75', color: HUES.indigo, line: 'saude_fitness' },
   { label: 'Nutrição', examples: ['Consulta e plano alimentar', 'Acompanhamento nutricional'], img: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&auto=format&fit=crop&q=75', color: HUES.sage, line: 'saude_fitness' },
 ]
 
 const SEGMENTS_LABEL: Record<SegLine, string> = { estetica: 'Estética', saude_fitness: 'Saúde & Fitness' }
 
 const SEG_TABS: { value: SegLine; label: string; lead: string }[] = [
-  { value: 'estetica', label: 'Estética', lead: 'Salão, barbearia, unhas e estética — atendimento individual, sem choque de agenda.' },
-  { value: 'saude_fitness', label: 'Saúde & Fitness', lead: 'Pilates, aulas, personal e nutrição — em turmas com vagas ou atendimento individual.' },
+  { value: 'estetica', label: 'Estética', lead: 'Salão, barbearia, manicure e massagem — atendimento individual, sem choque de agenda.' },
+  { value: 'saude_fitness', label: 'Saúde & Fitness', lead: 'Academia, personal, lutas, avaliação física e nutrição — em turmas com vagas ou atendimento individual.' },
 ]
 
 const testimonials: { name: string; role: string; text: string; avatar: string; color: string; line: SegLine }[] = [
