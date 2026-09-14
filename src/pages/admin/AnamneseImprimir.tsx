@@ -42,6 +42,19 @@ export default function AnamneseImprimir() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
+  // Documento pensado para impressão: sempre em fundo claro, mesmo que o
+  // painel esteja no tema escuro (o atributo data-theme fica na <html> e,
+  // sem isto, a ponte de CSS do escuro remapeia bg-white/text-gray-* aqui
+  // também — herdado da aba/rota anterior, já que esta página abre à parte).
+  useEffect(() => {
+    const previous = document.documentElement.getAttribute('data-theme')
+    document.documentElement.setAttribute('data-theme', 'light')
+    return () => {
+      if (previous) document.documentElement.setAttribute('data-theme', previous)
+      else document.documentElement.removeAttribute('data-theme')
+    }
+  }, [])
+
   useEffect(() => {
     if (!formId) return
     supabase
@@ -64,7 +77,14 @@ export default function AnamneseImprimir() {
 
   return (
     <div className="min-h-screen bg-paper py-8 px-4 print:p-0 print:bg-white">
-      <style>{`@media print { .no-print { display: none !important; } body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }`}</style>
+      <style>{`
+        :root { color-scheme: light; }
+        @media print {
+          .no-print { display: none !important; }
+          html, body { background: #fff !important; color-scheme: light !important; }
+          body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+        }
+      `}</style>
 
       <div className="max-w-3xl mx-auto">
         <div className="no-print flex justify-end mb-4">
