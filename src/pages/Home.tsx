@@ -43,7 +43,7 @@ const HERO_IMAGES = [
   { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1600&auto=format&fit=crop&q=80', label: 'Salão de Beleza', tint: HUES.rose, line: 'estetica' as SegLine },
   { src: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600&auto=format&fit=crop&q=80', label: 'Barbearia', tint: HUES.brass, line: 'estetica' as SegLine },
   { src: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1600&auto=format&fit=crop&q=80', label: 'Centro de Estética', tint: HUES.plum, line: 'estetica' as SegLine },
-  { src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1600&auto=format&fit=crop&q=80', label: 'Estúdio de Pilates', tint: HUES.sage, line: 'saude_fitness' as SegLine },
+  { src: 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=1600&auto=format&fit=crop&q=80', label: 'Estúdio de Pilates', tint: HUES.sage, line: 'saude_fitness' as SegLine },
   { src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1600&auto=format&fit=crop&q=80', label: 'Academia', tint: HUES.indigo, line: 'saude_fitness' as SegLine },
   { src: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1600&auto=format&fit=crop&q=80', label: 'Lutas & Artes Marciais', tint: HUES.clay, line: 'saude_fitness' as SegLine },
 ]
@@ -139,12 +139,26 @@ const categories: { label: string; examples: string[]; img: string; color: strin
   // Saúde & Fitness — academia, personal, lutas, avaliação, nutrição
   { label: 'Academia & Personal', examples: ['Treino funcional e musculação', 'Personal trainer e elaboração de treinos'], img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=75', color: HUES.indigo, line: 'saude_fitness' },
   { label: 'Lutas & Artes Marciais', examples: ['Jiu-jitsu, karatê e boxe', 'Turmas por faixa etária e nível'], img: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=600&auto=format&fit=crop&q=75', color: HUES.clay, line: 'saude_fitness' },
-  { label: 'Pilates & Dança', examples: ['Pilates individual e em grupo', 'Balé, dança e zumba'], img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&auto=format&fit=crop&q=75', color: HUES.sage, line: 'saude_fitness' },
+  { label: 'Pilates & Dança', examples: ['Pilates individual e em grupo', 'Balé, dança e zumba'], img: 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=600&auto=format&fit=crop&q=75', color: HUES.sage, line: 'saude_fitness' },
   { label: 'Avaliação Física', examples: ['Bioimpedância e antropometria', 'Prescrição de treino personalizada'], img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&auto=format&fit=crop&q=75', color: HUES.indigo, line: 'saude_fitness' },
   { label: 'Nutrição', examples: ['Consulta e plano alimentar', 'Acompanhamento nutricional'], img: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&auto=format&fit=crop&q=75', color: HUES.sage, line: 'saude_fitness' },
 ]
 
 const SEGMENTS_LABEL: Record<SegLine, string> = { estetica: 'Estética', saude_fitness: 'Saúde & Fitness' }
+
+// Foto de pilates trocada por uma mais fiel ao estúdio real. Sem como
+// pré-visualizar imagens neste ambiente, a antiga (já comprovada) vira
+// fallback automático via onError — se a nova não carregar, volta pra ela
+// em vez de deixar o ícone de imagem quebrada.
+const PILATES_IMG_NEW = 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776'
+const PILATES_IMG_FALLBACK = 'https://images.unsplash.com/photo-1518611012118-696072aa579a'
+function pilatesImgOnError(fallbackWidth: number) {
+  return (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (e.currentTarget.src.startsWith(PILATES_IMG_NEW)) {
+      e.currentTarget.src = `${PILATES_IMG_FALLBACK}?w=${fallbackWidth}&auto=format&fit=crop&q=80`
+    }
+  }
+}
 
 const SEG_TABS: { value: SegLine; label: string; lead: string }[] = [
   { value: 'estetica', label: 'Estética', lead: 'Salão, barbearia, manicure e massagem — atendimento individual, sem choque de agenda.' },
@@ -462,6 +476,7 @@ export default function Home({ segment }: { segment?: SegLine } = {}) {
               alt=""
               className="w-full h-full object-cover"
               style={{ animation: `kenburns-${i + 1} ${totalCycle}s ease-in-out ${i * slideDuration}s infinite alternate` }}
+              onError={pilatesImgOnError(1600)}
             />
             {/* Banho de cor por slide — dá temperatura sem apagar a foto */}
             <div className="absolute inset-0 mix-blend-soft-light" style={{ background: tint, opacity: 0.55 }} />
@@ -811,7 +826,7 @@ export default function Home({ segment }: { segment?: SegLine } = {}) {
                     className="rail-card group shrink-0 w-[300px] sm:w-[340px]"
                   >
                     <div className="overflow-hidden rounded-2xl mb-4 relative" style={{ aspectRatio: '4/3' }}>
-                      <img src={c.img} alt={c.label} className="w-full h-full object-cover" loading="lazy" />
+                      <img src={c.img} alt={c.label} className="w-full h-full object-cover" loading="lazy" onError={pilatesImgOnError(600)} />
                       <div
                         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                         style={{ background: `linear-gradient(to top, ${c.color}cc, transparent 60%)` }}
