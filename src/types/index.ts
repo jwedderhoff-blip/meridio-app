@@ -25,6 +25,8 @@ export interface Establishment {
   theme_mode?: 'light' | 'dark' | 'system' | null
   /** Recurso beta: frente de caixa. Liberado manualmente pelo superadmin em cadastros de teste. */
   cash_beta_enabled?: boolean
+  /** Recurso beta: ficha de anamnese. Liberado manualmente pelo superadmin em cadastros de teste. */
+  health_form_beta_enabled?: boolean
   created_at: string
 }
 

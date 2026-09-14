@@ -38,6 +38,7 @@ function EditModal({ establishment, onClose, onSave }: EditModalProps) {
   const [category, setCategory] = useState(establishment.category)
   const [slug, setSlug]       = useState(establishment.slug)
   const [cashBeta, setCashBeta] = useState(establishment.cash_beta_enabled ?? false)
+  const [healthFormBeta, setHealthFormBeta] = useState(establishment.health_form_beta_enabled ?? false)
 
   const handleSave = async () => {
     setSaving(true)
@@ -50,6 +51,7 @@ function EditModal({ establishment, onClose, onSave }: EditModalProps) {
       category,
       slug: slug.trim(),
       cash_beta_enabled: cashBeta,
+      health_form_beta_enabled: healthFormBeta,
     })
     if (err) setError(err)
     else onClose()
@@ -153,6 +155,15 @@ function EditModal({ establishment, onClose, onSave }: EditModalProps) {
                     className="rounded accent-indigo-600"
                   />
                   <span className="text-sm text-gray-700">Frente de caixa (controle de pagamentos)</span>
+                </label>
+                <label className="flex items-center gap-2.5 rounded-xl border border-gray-200 px-3 py-2.5 cursor-pointer select-none mt-2">
+                  <input
+                    type="checkbox"
+                    checked={healthFormBeta}
+                    onChange={(e) => setHealthFormBeta(e.target.checked)}
+                    className="rounded accent-indigo-600"
+                  />
+                  <span className="text-sm text-gray-700">Anamnese (ficha de saúde)</span>
                 </label>
                 <p className="text-xs text-gray-400 mt-1">
                   Fora do fluxo padrão do Meridio. Libere só em cadastros de teste.

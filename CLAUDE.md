@@ -149,6 +149,23 @@ função `payment-webhook` está com "Enforce JWT verification" desligado
 (senão o Mercado Pago não consegue notificar e pagamentos nunca confirmam
 sozinhos).
 
+## Anamnese (ficha de saúde) — módulo beta
+
+Uma ficha por cliente (não por matrícula). Dono ou professor gera um link
+público em `/admin/anamnese` (botão "Gerar link"); o aluno preenche em
+`/anamnese/:token` sem precisar de login — o token é a única "senha", nunca
+há policy de leitura pública direta na tabela `health_forms`. Duas funções
+SECURITY DEFINER intermediam tudo: `get_health_form_by_token` (leitura) e
+`submit_health_form` (grava e marca `status = 'preenchida'`). Se alguma
+resposta do PAR-Q for "Sim", `parq_alert` fica `true` e aparece destacado
+para o dono/professor. Dono e professores (`is_member`) veem as respostas
+completas — decisão do usuário, dado sensível mas operacional para a equipe.
+
+Recurso beta como o caixa: `establishments.health_form_beta_enabled`
+(default false), liberado em Super Admin → Estabelecimentos → "Recursos
+beta". Definição dos campos/seções em `src/lib/anamnese.ts` (fonte única
+para o formulário público e a visualização no painel).
+
 ## Superadmin: entrar no painel de um cliente
 
 Super Admin → Estabelecimentos → ícone "Entrar no painel" (LogIn) leva o

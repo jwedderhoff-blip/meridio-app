@@ -11,6 +11,7 @@ import Register from './pages/Register'
 import Home from './pages/Home'
 import Planos from './pages/Planos'
 import Booking from './pages/Booking'
+import Anamnese from './pages/Anamnese'
 import EstabelecimentoPage from './pages/EstabelecimentoPage'
 import NotFound from './pages/NotFound'
 import Dashboard from './pages/admin/Dashboard'
@@ -20,6 +21,7 @@ import Servicos from './pages/admin/Servicos'
 import Profissionais from './pages/admin/Profissionais'
 import Financeiro from './pages/admin/Financeiro'
 import Caixa from './pages/admin/Caixa'
+import AnamneseAdmin from './pages/admin/Anamnese'
 import Configuracoes from './pages/admin/Configuracoes'
 import SelecionarEstabelecimento from './pages/admin/SelecionarEstabelecimento'
 import './index.css'
@@ -97,6 +99,24 @@ function CashBetaRoute() {
     )
   }
   if (!establishment?.cash_beta_enabled) return <Navigate to="/admin" replace />
+  return <Outlet />
+}
+
+/**
+ * Anamnese é recurso beta, liberado pelo superadmin (establishments.
+ * health_form_beta_enabled). Faz sentido só em Saúde & Fitness.
+ */
+function HealthFormBetaRoute() {
+  const { user } = useAuth()
+  const { establishment, loading } = useEstablishment(user?.id)
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin" />
+      </div>
+    )
+  }
+  if (!establishment?.health_form_beta_enabled) return <Navigate to="/admin" replace />
   return <Outlet />
 }
 
@@ -185,6 +205,7 @@ function AppRoutes() {
       <Route path="/demo" element={<Suspense fallback={<DemoFallback />}><Demo /></Suspense>} />
       <Route path="/agendar/:slug" element={<EstabelecimentoPage />} />
       <Route path="/agendar/:slug/agendar" element={<Booking />} />
+      <Route path="/anamnese/:token" element={<Anamnese />} />
       <Route element={<PrivateRoute />}>
         <Route path="/selecionar" element={<SelecionarEstabelecimento />} />
         <Route path="/admin" element={<AdminLayout />}>
@@ -192,6 +213,9 @@ function AppRoutes() {
           <Route path="agenda" element={<Agenda />} />
           <Route path="servicos" element={<Servicos />} />
           <Route path="clientes" element={<Clientes />} />
+          <Route element={<HealthFormBetaRoute />}>
+            <Route path="anamnese" element={<AnamneseAdmin />} />
+          </Route>
           <Route element={<CashBetaRoute />}>
             <Route path="caixa" element={<Caixa />} />
           </Route>
