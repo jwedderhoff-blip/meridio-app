@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Wallet, CheckCircle2, Receipt, UserPlus } from 'lucide-react'
@@ -278,9 +279,20 @@ export default function Caixa() {
                       {m.operator_email ? ` · ${m.operator_email}` : ''}
                     </p>
                   </div>
-                  <span className="text-sm font-semibold text-green-700 shrink-0">
-                    {formatCurrency(Number(m.amount))}
-                  </span>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="text-sm font-semibold text-green-700">
+                      {formatCurrency(Number(m.amount))}
+                    </span>
+                    <Link
+                      to={`/admin/caixa/${m.id}/recibo`}
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Gerar recibo"
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-brand hover:bg-brand-soft transition"
+                    >
+                      <Receipt size={15} />
+                    </Link>
+                  </div>
                 </li>
               ))}
             </ul>

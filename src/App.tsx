@@ -21,6 +21,7 @@ import Servicos from './pages/admin/Servicos'
 import Profissionais from './pages/admin/Profissionais'
 import Financeiro from './pages/admin/Financeiro'
 import Caixa from './pages/admin/Caixa'
+import CaixaRecibo from './pages/admin/CaixaRecibo'
 import AnamneseAdmin from './pages/admin/Anamnese'
 import AnamneseImprimir from './pages/admin/AnamneseImprimir'
 import Configuracoes from './pages/admin/Configuracoes'
@@ -210,6 +211,7 @@ function AppRoutes() {
       <Route element={<PrivateRoute />}>
         <Route path="/selecionar" element={<SelecionarEstabelecimento />} />
         <Route path="/admin/anamnese/:formId/imprimir" element={<AnamneseImprimir />} />
+        <Route path="/admin/caixa/:movementId/recibo" element={<CaixaRecibo />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="agenda" element={<Agenda />} />
