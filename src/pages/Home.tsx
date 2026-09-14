@@ -37,13 +37,33 @@ const PAPER = '#fbfaf8'
 const PAPER_2 = '#f3f1ec'
 const LINE = '#e5e1d9'
 
+type SegLine = 'estetica' | 'saude_fitness'
+
 const HERO_IMAGES = [
-  { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1600&auto=format&fit=crop&q=80', label: 'Salão de Beleza', tint: HUES.rose },
-  { src: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600&auto=format&fit=crop&q=80', label: 'Barbearia', tint: HUES.brass },
-  { src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1600&auto=format&fit=crop&q=80', label: 'Estúdio de Pilates', tint: HUES.sage },
-  { src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1600&auto=format&fit=crop&q=80', label: 'Academia', tint: HUES.indigo },
-  { src: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1600&auto=format&fit=crop&q=80', label: 'Centro de Estética', tint: HUES.plum },
+  { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1600&auto=format&fit=crop&q=80', label: 'Salão de Beleza', tint: HUES.rose, line: 'estetica' as SegLine },
+  { src: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600&auto=format&fit=crop&q=80', label: 'Barbearia', tint: HUES.brass, line: 'estetica' as SegLine },
+  { src: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1600&auto=format&fit=crop&q=80', label: 'Centro de Estética', tint: HUES.plum, line: 'estetica' as SegLine },
+  { src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1600&auto=format&fit=crop&q=80', label: 'Estúdio de Pilates', tint: HUES.sage, line: 'saude_fitness' as SegLine },
+  { src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1600&auto=format&fit=crop&q=80', label: 'Academia', tint: HUES.indigo, line: 'saude_fitness' as SegLine },
 ]
+
+/** Cópia (headline, subtítulo, CTA) específica de cada landing dedicada. */
+const SEGMENT_COPY: Record<SegLine, { eyebrow: string; title: string; emphasis: string; subtitle: string; cta: string }> = {
+  estetica: {
+    eyebrow: 'Feito para salões, barbearias e estética',
+    title: 'Seu salão,',
+    emphasis: 'sempre lotado de horários',
+    subtitle: 'Agendamento online, lembretes automáticos e gestão completa para salões, barbearias, manicure e centros de estética.',
+    cta: 'Cadastrar meu salão grátis',
+  },
+  saude_fitness: {
+    eyebrow: 'Feito para academias, estúdios e profissionais de saúde',
+    title: 'Suas turmas,',
+    emphasis: 'sempre com vaga certa',
+    subtitle: 'Agendamento com vagas por turma, mensalidade automática e gestão completa para academias, pilates, lutas, personal e nutrição.',
+    cta: 'Cadastrar minha academia grátis',
+  },
+}
 
 const features = [
   {
@@ -109,8 +129,6 @@ const stats = [
   { value: 'Grátis', label: 'Para começar', color: HUES.clay },
 ]
 
-type SegLine = 'estetica' | 'saude_fitness'
-
 const categories: { label: string; examples: string[]; img: string; color: string; line: SegLine }[] = [
   { label: 'Salão de Beleza', examples: ['Corte, escova e coloração', 'Manicure e pedicure'], img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=75', color: HUES.rose, line: 'estetica' },
   { label: 'Barbearia', examples: ['Corte masculino e barba', 'Tratamento capilar'], img: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&auto=format&fit=crop&q=75', color: HUES.brass, line: 'estetica' },
@@ -123,15 +141,18 @@ const categories: { label: string; examples: string[]; img: string; color: strin
   { label: 'Nutrição', examples: ['Consulta e plano alimentar', 'Acompanhamento nutricional'], img: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&auto=format&fit=crop&q=75', color: HUES.sage, line: 'saude_fitness' },
 ]
 
+const SEGMENTS_LABEL: Record<SegLine, string> = { estetica: 'Estética', saude_fitness: 'Saúde & Fitness' }
+
 const SEG_TABS: { value: SegLine; label: string; lead: string }[] = [
   { value: 'estetica', label: 'Estética', lead: 'Salão, barbearia, unhas e estética — atendimento individual, sem choque de agenda.' },
   { value: 'saude_fitness', label: 'Saúde & Fitness', lead: 'Pilates, aulas, personal e nutrição — em turmas com vagas ou atendimento individual.' },
 ]
 
-const testimonials = [
-  { name: 'Mariana Costa', role: 'Salão da Mari', text: 'Reduzi faltas em 70% com os lembretes automáticos. Minha agenda nunca esteve tão organizada.', avatar: 'MC', color: HUES.rose },
-  { name: 'Rafael Mendes', role: 'Barbearia RM', text: 'Meus clientes adoraram poder agendar pelo celular a qualquer hora. Aumentei os agendamentos em 40%.', avatar: 'RM', color: HUES.brass },
-  { name: 'Juliana Freitas', role: 'Studio Pilates Flex', text: 'A gestão de turmas e avaliações ficou simples. Economizo horas por semana que antes gastava no WhatsApp.', avatar: 'JF', color: HUES.plum },
+const testimonials: { name: string; role: string; text: string; avatar: string; color: string; line: SegLine }[] = [
+  { name: 'Mariana Costa', role: 'Salão da Mari', text: 'Reduzi faltas em 70% com os lembretes automáticos. Minha agenda nunca esteve tão organizada.', avatar: 'MC', color: HUES.rose, line: 'estetica' },
+  { name: 'Rafael Mendes', role: 'Barbearia RM', text: 'Meus clientes adoraram poder agendar pelo celular a qualquer hora. Aumentei os agendamentos em 40%.', avatar: 'RM', color: HUES.brass, line: 'estetica' },
+  { name: 'Juliana Freitas', role: 'Studio Pilates Flex', text: 'A gestão de turmas e avaliações ficou simples. Economizo horas por semana que antes gastava no WhatsApp.', avatar: 'JF', color: HUES.plum, line: 'saude_fitness' },
+  { name: 'André Souza', role: 'Academia Fit Body', text: 'As vagas por turma acabaram com o choque de horário nas aulas de jiu-jitsu. Os alunos veem a vaga livre e já reservam.', avatar: 'AS', color: HUES.indigo, line: 'saude_fitness' },
 ]
 
 const prefersReduced = () =>
@@ -250,12 +271,19 @@ function SectionIntro({ eyebrow, title, italic, lead, color = HUES.indigo }: {
   )
 }
 
-export default function Home() {
+export default function Home({ segment }: { segment?: SegLine } = {}) {
   const { session } = useAuth()
   const { applyPublic } = useTheme()
   const [scrolled, setScrolled] = useState(false)
   const [openFeature, setOpenFeature] = useState<number | null>(null)
-  const [segLine, setSegLine] = useState<SegLine>('estetica')
+  // Landing dedicada (/estetica, /saude-fitness): linha travada na do segmento.
+  // Landing geral (/): começa em estética, com abas para trocar.
+  const [segLine, setSegLine] = useState<SegLine>(segment ?? 'estetica')
+  const dedicated = !!segment
+  const copy = SEGMENT_COPY[segment ?? 'estetica']
+  const heroImages = dedicated ? HERO_IMAGES.filter((h) => h.line === segment) : HERO_IMAGES
+  const visibleTestimonials = dedicated ? testimonials.filter((t) => t.line === segment) : testimonials
+  const registerHref = segment ? `/register?linha=${segment}` : '/register'
 
   // Landing tem paleta clara própria: quem chega vindo de um estabelecimento
   // escuro não pode trazer o tema junto.
@@ -283,11 +311,11 @@ export default function Home() {
   // Depoimentos giram sozinhos
   useEffect(() => {
     if (prefersReduced()) return
-    const id = setInterval(() => setActiveQuote((q) => (q + 1) % testimonials.length), 6000)
+    const id = setInterval(() => setActiveQuote((q) => (q + 1) % visibleTestimonials.length), 6000)
     return () => clearInterval(id)
   }, [])
 
-  const n = HERO_IMAGES.length
+  const n = heroImages.length
   const slideDuration = 6
   const fadeDuration = 1.5
   const totalCycle = n * slideDuration
@@ -339,10 +367,24 @@ export default function Home() {
         }}
       >
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="font-display text-xl tracking-tight transition-colors duration-500" style={{ color: scrolled ? INK : '#fff' }}>
+          <Link to="/" className="font-display text-xl tracking-tight transition-colors duration-500" style={{ color: scrolled ? INK : '#fff' }}>
             Meridio
-          </span>
+          </Link>
           <div className="flex items-center gap-6">
+            {dedicated ? (
+              <Link to="/" className="text-sm font-medium transition-colors duration-500 hidden sm:block" style={{ color: scrolled ? INK_SOFT : 'rgba(255,255,255,0.85)' }}>
+                Ver outros segmentos
+              </Link>
+            ) : (
+              <div className="hidden sm:flex items-center gap-4">
+                <Link to="/estetica" className="text-sm font-medium transition-colors duration-500" style={{ color: scrolled ? INK_SOFT : 'rgba(255,255,255,0.85)' }}>
+                  Estética
+                </Link>
+                <Link to="/saude-fitness" className="text-sm font-medium transition-colors duration-500" style={{ color: scrolled ? INK_SOFT : 'rgba(255,255,255,0.85)' }}>
+                  Saúde &amp; Fitness
+                </Link>
+              </div>
+            )}
             <Link to="/planos" className="text-sm font-medium transition-colors duration-500" style={{ color: scrolled ? INK_SOFT : 'rgba(255,255,255,0.85)' }}>
               Planos
             </Link>
@@ -356,7 +398,7 @@ export default function Home() {
                   Entrar
                 </Link>
                 <Link
-                  to="/register"
+                  to={registerHref}
                   className="text-sm font-medium px-5 py-2 rounded-full transition-all duration-300 hover:opacity-90"
                   style={{
                     background: scrolled ? HUES.indigo : 'rgba(255,255,255,0.14)',
@@ -375,7 +417,7 @@ export default function Home() {
 
       {/* ══════════════ HERO ══════════════ */}
       <section className="relative min-h-screen flex flex-col justify-center overflow-hidden">
-        {HERO_IMAGES.map(({ src, tint }, i) => (
+        {heroImages.map(({ src, tint }, i) => (
           <div
             key={src}
             className="absolute inset-0"
@@ -408,11 +450,13 @@ export default function Home() {
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-8" data-reveal>
               <span className="h-px w-10" style={{ background: 'rgba(255,255,255,0.45)' }} />
-              <span className="text-xs uppercase tracking-[0.22em] text-white/75">Desenvolvida para o seu negócio</span>
+              <span className="text-xs uppercase tracking-[0.22em] text-white/75">
+                {dedicated ? copy.eyebrow : 'Desenvolvida para o seu negócio'}
+              </span>
             </div>
 
             <h1 className="font-display text-white leading-[1.02] tracking-tight mb-8" style={{ fontSize: 'clamp(2.75rem, 7vw, 5.5rem)' }} data-reveal>
-              Seu negócio,
+              {dedicated ? copy.title : 'Seu negócio,'}
               <br />
               <em
                 className="font-normal italic"
@@ -423,13 +467,14 @@ export default function Home() {
                   backgroundClip: 'text',
                 }}
               >
-                sem complicações
+                {dedicated ? copy.emphasis : 'sem complicações'}
               </em>
             </h1>
 
             <p className="text-lg sm:text-xl text-white/80 max-w-xl mb-12 leading-relaxed font-light" data-reveal style={{ transitionDelay: '120ms' }}>
-              Agendamento online, lembretes automáticos e gestão completa para salões,
-              barbearias, estética, pilates, aulas coletivas e muito mais.
+              {dedicated
+                ? copy.subtitle
+                : 'Agendamento online, lembretes automáticos e gestão completa para salões, barbearias, estética, pilates, aulas coletivas e muito mais.'}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-16" data-reveal style={{ transitionDelay: '200ms' }}>
@@ -453,14 +498,14 @@ export default function Home() {
               ) : (
                 <>
                   <Link
-                    to="/register"
+                    to={registerHref}
                     className="link-arrow inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full font-medium text-[15px] text-white transition-all duration-300 hover:gap-4"
                     style={{
                       background: `linear-gradient(120deg, ${HUES.indigo}, ${HUES.plum})`,
                       boxShadow: '0 10px 40px rgba(79,70,229,0.45)',
                     }}
                   >
-                    Começar grátis agora <ArrowRight size={17} />
+                    {dedicated ? copy.cta : 'Começar grátis agora'} <ArrowRight size={17} />
                   </Link>
                   <Link
                     to="/demo"
@@ -500,7 +545,7 @@ export default function Home() {
         <div className="absolute bottom-10 inset-x-0 px-6" style={{ zIndex: 2 }}>
           <div className="max-w-6xl mx-auto flex items-center justify-between gap-6">
             <div className="relative h-5 flex-1 hidden sm:block">
-              {HERO_IMAGES.map(({ src, label }, i) => (
+              {heroImages.map(({ src, label }, i) => (
                 <span
                   key={src}
                   className="absolute left-0 top-0 text-xs uppercase tracking-[0.2em] text-white/70 whitespace-nowrap"
@@ -514,7 +559,7 @@ export default function Home() {
               ))}
             </div>
             <div className="flex gap-2 mx-auto sm:mx-0">
-              {HERO_IMAGES.map(({ src }, i) => (
+              {heroImages.map(({ src }, i) => (
                 <div key={src} className="h-px w-10 bg-white/25 overflow-hidden">
                   <div className="h-full bg-white origin-left" style={{ animation: `bar-fill ${totalCycle}s linear ${i * slideDuration}s infinite` }} />
                 </div>
@@ -670,7 +715,7 @@ export default function Home() {
                   Ver na demonstração
                 </Link>
                 <Link
-                  to="/register"
+                  to={registerHref}
                   className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium text-white transition hover:opacity-90"
                   style={{ background: HUES.indigo }}
                 >
@@ -686,34 +731,36 @@ export default function Home() {
       <section className="py-24" style={{ background: PAPER }}>
         <div className="max-w-6xl mx-auto px-6">
           <SectionIntro
-            eyebrow="Segmentos"
+            eyebrow={dedicated ? SEGMENTS_LABEL[segment as SegLine] : 'Segmentos'}
             title="Para quem é?"
             lead={SEG_TABS.find((t) => t.value === segLine)!.lead}
             color={HUES.clay}
           />
 
-          {/* Abas por linha de trabalho */}
-          <div className="flex justify-center mb-10">
-            <div className="inline-flex p-1 rounded-full" style={{ background: '#efece5' }}>
-              {SEG_TABS.map((t) => {
-                const on = segLine === t.value
-                return (
-                  <button
-                    key={t.value}
-                    onClick={() => setSegLine(t.value)}
-                    className="px-5 sm:px-7 py-2.5 rounded-full text-sm font-medium transition-all duration-300"
-                    style={{
-                      background: on ? '#fff' : 'transparent',
-                      color: on ? INK : MUTED,
-                      boxShadow: on ? '0 1px 3px rgba(20,19,28,.12)' : 'none',
-                    }}
-                  >
-                    {t.label}
-                  </button>
-                )
-              })}
+          {/* Abas por linha de trabalho — só na landing geral. Nas dedicadas, a linha já está fixa. */}
+          {!dedicated && (
+            <div className="flex justify-center mb-10">
+              <div className="inline-flex p-1 rounded-full" style={{ background: '#efece5' }}>
+                {SEG_TABS.map((t) => {
+                  const on = segLine === t.value
+                  return (
+                    <button
+                      key={t.value}
+                      onClick={() => setSegLine(t.value)}
+                      className="px-5 sm:px-7 py-2.5 rounded-full text-sm font-medium transition-all duration-300"
+                      style={{
+                        background: on ? '#fff' : 'transparent',
+                        color: on ? INK : MUTED,
+                        boxShadow: on ? '0 1px 3px rgba(20,19,28,.12)' : 'none',
+                      }}
+                    >
+                      {t.label}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Dois trilhos em direções opostas */}
@@ -767,7 +814,7 @@ export default function Home() {
       <section className="py-24 px-6 relative overflow-hidden" style={{ background: PAPER_2 }}>
         <div
           className="absolute -right-32 top-1/4 w-[420px] h-[420px] rounded-full blur-3xl pointer-events-none"
-          style={{ background: testimonials[activeQuote].color, opacity: 0.13, transition: 'background 1s ease' }}
+          style={{ background: visibleTestimonials[activeQuote]?.color ?? HUES.rose, opacity: 0.13, transition: 'background 1s ease' }}
           data-parallax="0.12"
         />
         <div className="max-w-6xl mx-auto relative">
@@ -782,7 +829,7 @@ export default function Home() {
 
             {/* Altura reservada evita o salto de layout na troca */}
             <div className="relative min-h-[190px] sm:min-h-[160px]">
-              {testimonials.map((t, i) => (
+              {visibleTestimonials.map((t, i) => (
                 <div
                   key={t.name}
                   className="absolute inset-0 transition-all duration-700"
@@ -812,7 +859,7 @@ export default function Home() {
             </div>
 
             <div className="flex gap-2.5 mt-10">
-              {testimonials.map((t, i) => (
+              {visibleTestimonials.map((t, i) => (
                 <button
                   key={t.name}
                   onClick={() => setActiveQuote(i)}
@@ -867,7 +914,7 @@ export default function Home() {
 
           <div data-reveal style={{ transitionDelay: '180ms' }}>
             <Link
-              to="/register"
+              to={registerHref}
               className="link-arrow inline-flex items-center gap-3 px-10 py-4 rounded-full font-medium text-base transition-all duration-300 hover:gap-5"
               style={{ background: '#fff', color: INK, boxShadow: '0 12px 44px rgba(0,0,0,0.35)' }}
             >

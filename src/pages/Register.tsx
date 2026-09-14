@@ -1,7 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useEffect } from 'react'
 import { Scissors, Mail, Lock, Building2, Phone, MapPin, Check } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -33,6 +34,7 @@ function slugify(text: string) {
 export default function Register() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const {
     register,
@@ -44,6 +46,15 @@ export default function Register() {
   } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const segment = watch('segment')
+
+  // Vindo de uma landing dedicada (/estetica ou /saude-fitness) via
+  // "Cadastrar grátis" — a linha do negócio já vem escolhida.
+  useEffect(() => {
+    const linha = searchParams.get('linha')
+    if (linha === 'estetica' || linha === 'saude_fitness') {
+      setValue('segment', linha, { shouldValidate: true })
+    }
+  }, [searchParams, setValue])
 
   const onSubmit = async (data: FormData) => {
     // Tenta signup; se o usuário já existe, tenta login direto

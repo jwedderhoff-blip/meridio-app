@@ -82,6 +82,25 @@ function OwnerRoute() {
 }
 
 /**
+ * Caixa é recurso beta: só acessível nos estabelecimentos liberados pelo
+ * superadmin (establishments.cash_beta_enabled). Tentativa pela URL direta
+ * volta para o Dashboard.
+ */
+function CashBetaRoute() {
+  const { user } = useAuth()
+  const { establishment, loading } = useEstablishment(user?.id)
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin" />
+      </div>
+    )
+  }
+  if (!establishment?.cash_beta_enabled) return <Navigate to="/admin" replace />
+  return <Outlet />
+}
+
+/**
  * Quem é super admin sai da tabela admins, e só dela. Já houve aqui uma lista
  * de e-mails no código como alternativa: além de exigir deploy para mudar quem
  * tem acesso, ela ia junto no bundle que qualquer visitante baixa.
@@ -158,6 +177,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/estetica" element={<Home segment="estetica" />} />
+      <Route path="/saude-fitness" element={<Home segment="saude_fitness" />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/planos" element={<Planos />} />
@@ -171,7 +192,9 @@ function AppRoutes() {
           <Route path="agenda" element={<Agenda />} />
           <Route path="servicos" element={<Servicos />} />
           <Route path="clientes" element={<Clientes />} />
-          <Route path="caixa" element={<Caixa />} />
+          <Route element={<CashBetaRoute />}>
+            <Route path="caixa" element={<Caixa />} />
+          </Route>
           <Route element={<OwnerRoute />}>
             <Route path="profissionais" element={<Profissionais />} />
             <Route path="financeiro" element={<Financeiro />} />

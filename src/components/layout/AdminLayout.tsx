@@ -28,7 +28,7 @@ const navItems = [
   { to: '/admin/agenda', label: 'Agenda', icon: CalendarDays, end: false, viewer: true },
   { to: '/admin/clientes', label: 'Clientes', icon: Users, end: false, viewer: true },
   { to: '/admin/servicos', label: 'Serviços', icon: ListChecks, end: false, viewer: true },
-  { to: '/admin/caixa', label: 'Caixa', icon: Banknote, end: false, viewer: true },
+  { to: '/admin/caixa', label: 'Caixa', icon: Banknote, end: false, viewer: true, beta: true },
   { to: '/admin/profissionais', label: 'Profissionais', icon: UserCog, end: false, viewer: false },
   { to: '/admin/financeiro', label: 'Financeiro', icon: Wallet, end: false, viewer: false },
   { to: '/admin/configuracoes', label: 'Configurações', icon: SlidersHorizontal, end: false, viewer: false },
@@ -38,7 +38,10 @@ export default function AdminLayout() {
   const { user, signOut } = useAuth()
   const { establishment, role } = useEstablishment(user?.id)
   const isViewer = role === 'viewer'
-  const visibleNav = isViewer ? navItems.filter((i) => i.viewer) : navItems
+  // Caixa é recurso beta: só aparece nos estabelecimentos liberados pelo superadmin.
+  const visibleNav = navItems
+    .filter((i) => !i.beta || establishment?.cash_beta_enabled)
+    .filter((i) => !isViewer || i.viewer)
   const { establishments } = useEstablishments(user?.id)
   const { applyEstablishment } = useTheme()
   const navigate = useNavigate()

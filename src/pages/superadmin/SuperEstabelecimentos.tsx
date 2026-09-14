@@ -35,6 +35,7 @@ function EditModal({ establishment, onClose, onSave }: EditModalProps) {
   const [address, setAddress] = useState(establishment.address ?? '')
   const [category, setCategory] = useState(establishment.category)
   const [slug, setSlug]       = useState(establishment.slug)
+  const [cashBeta, setCashBeta] = useState(establishment.cash_beta_enabled ?? false)
 
   const handleSave = async () => {
     setSaving(true)
@@ -46,6 +47,7 @@ function EditModal({ establishment, onClose, onSave }: EditModalProps) {
       address: address.trim() || null,
       category,
       slug: slug.trim(),
+      cash_beta_enabled: cashBeta,
     })
     if (err) setError(err)
     else onClose()
@@ -138,6 +140,21 @@ function EditModal({ establishment, onClose, onSave }: EditModalProps) {
                   className={inputCls}
                   placeholder="Rua, número, bairro, cidade"
                 />
+              </Field>
+
+              <Field label="Recursos beta">
+                <label className="flex items-center gap-2.5 rounded-xl border border-gray-200 px-3 py-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={cashBeta}
+                    onChange={(e) => setCashBeta(e.target.checked)}
+                    className="rounded accent-indigo-600"
+                  />
+                  <span className="text-sm text-gray-700">Frente de caixa (controle de pagamentos)</span>
+                </label>
+                <p className="text-xs text-gray-400 mt-1">
+                  Fora do fluxo padrão do Meridio. Libere só em cadastros de teste.
+                </p>
               </Field>
 
               {error && (

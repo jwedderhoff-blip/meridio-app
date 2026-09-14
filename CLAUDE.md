@@ -125,6 +125,17 @@ Hooks disponíveis:
 | `establishment_members` | id, establishment_id, email, role ('viewer'), created_at — acessos de login por e-mail |
 | `cash_movements` | id, establishment_id, client_id, membership_charge_id, kind, description, amount, method, operator_email, created_at — frente de caixa |
 
+`establishments.cash_beta_enabled` (bool, default false) — frente de caixa é recurso
+beta, fora do fluxo padrão (agendamento + vagas/turmas). Liberado manualmente pelo
+superadmin em Super Admin → Estabelecimentos → editar → "Recursos beta".
+
+## Landing pages por segmento
+
+`/` é a landing geral (ambas as linhas). `/estetica` e `/saude-fitness` são landings
+dedicadas — mesmo componente `Home.tsx` parametrizado por `segment`, com hero, copy,
+imagens e CTA (`/register?linha=...`) próprios de cada linha. `Register.tsx` lê
+`?linha=` da URL e pré-seleciona a linha do negócio.
+
 RLS ativado em todas as tabelas; dono do estabelecimento acessa tudo via `owner_id = auth.uid()`.
 
 ## Branch padrão de desenvolvimento
