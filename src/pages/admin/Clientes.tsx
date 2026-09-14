@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { format, startOfMonth, endOfMonth } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Search, Download, User, ChevronDown, ChevronUp, MessageCircle, Calendar, GraduationCap, Wallet, Check, RotateCcw, Trash2, UserPlus, Merge, Pencil } from 'lucide-react'
+import { Search, Download, User, ChevronDown, ChevronUp, MessageCircle, Calendar, GraduationCap, Wallet, Check, RotateCcw, Trash2, UserPlus, Merge, Pencil, AlertTriangle, HeartPulse } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useEstablishment } from '../../hooks/useEstablishment'
 import { useClients } from '../../hooks/useClients'
 import { useClientFinance } from '../../hooks/useMemberships'
+import { useHealthForms, type HealthFormRow } from '../../hooks/useHealthForms'
 import { supabase } from '../../lib/supabase'
 import { isDemo } from '../../lib/isDemo'
 import { mockAppointments } from '../../lib/mockData'
@@ -60,11 +62,15 @@ function ClientRow({
   establishmentId,
   onDelete,
   onEdit,
+  healthForm,
+  showHealthForm,
 }: {
   client: Client
   establishmentId: string | undefined
   onDelete?: (id: string) => Promise<{ error: string | null }>
   onEdit?: (client: Client) => void
+  healthForm?: HealthFormRow | null
+  showHealthForm?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const [deleteErr, setDeleteErr] = useState<string | null>(null)
@@ -114,7 +120,26 @@ function ClientRow({
           <User size={18} className="text-brand" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900">{client.name}</p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm font-semibold text-gray-900">{client.name}</p>
+            {showHealthForm && (
+              healthForm?.status === 'preenchida' ? (
+                <span
+                  title={healthForm.parq_alert ? 'Anamnese preenchida — PAR-Q com alerta' : 'Anamnese preenchida'}
+                  className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${
+                    healthForm.parq_alert ? 'bg-amber-50 text-amber-700' : 'bg-green-50 text-green-700'
+                  }`}
+                >
+                  {healthForm.parq_alert && <AlertTriangle size={10} />}
+                  Anamnese OK
+                </span>
+              ) : healthForm?.status === 'pendente' ? (
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                  Anamnese pendente
+                </span>
+              ) : null
+            )}
+          </div>
           <div className="flex items-center gap-2 mt-0.5">
             <a
               href={`https://wa.me/55${client.phone.replace(/\D/g, '')}`}
@@ -297,6 +322,34 @@ function ClientRow({
               </div>
             </div>
           )}
+
+          {/* Cruza o status da anamnese com o cadastro do cliente */}
+          {showHealthForm && (
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <HeartPulse size={14} className="text-gray-400" />
+                  <span className="text-xs font-medium text-gray-600">Anamnese</span>
+                  {healthForm?.status === 'preenchida' ? (
+                    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${healthForm.parq_alert ? 'bg-amber-50 text-amber-700' : 'bg-green-50 text-green-700'}`}>
+                      {healthForm.parq_alert ? 'OK · PAR-Q com alerta' : 'OK'}
+                    </span>
+                  ) : healthForm?.status === 'pendente' ? (
+                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Pendente</span>
+                  ) : (
+                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-400">Não solicitada</span>
+                  )}
+                </div>
+                <Link
+                  to="/admin/anamnese"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-xs font-medium text-brand hover:underline"
+                >
+                  {healthForm ? 'Ver na Anamnese' : 'Gerar link'}
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </li>
@@ -309,6 +362,8 @@ export default function Clientes() {
   // Dono e superadmin (ajudando a configurar) podem excluir/editar/mesclar.
   const canDelete = role === 'owner' || role === 'admin'
   const { clients, loading, exportCsv, deleteClient, createClient, updateClient, refetch } = useClients(establishment?.id)
+  const showHealthForm = !!establishment?.health_form_beta_enabled
+  const { formByClient } = useHealthForms(showHealthForm ? establishment?.id : undefined)
   const [search, setSearch] = useState('')
   const [newOpen, setNewOpen] = useState(false)
   const [mergeOpen, setMergeOpen] = useState(false)
@@ -389,6 +444,8 @@ export default function Clientes() {
                   establishmentId={establishment?.id}
                   onDelete={canDelete ? deleteClient : undefined}
                   onEdit={canDelete ? setEditingClient : undefined}
+                  healthForm={formByClient(client.id)}
+                  showHealthForm={showHealthForm}
                 />
               ))}
             </ul>
