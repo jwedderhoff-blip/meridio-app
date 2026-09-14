@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { HeartPulse, Search, Copy, Check, MessageCircle, AlertTriangle, Eye, Printer, Clock } from 'lucide-react'
+import { HeartPulse, Search, Copy, Check, MessageCircle, AlertTriangle, Eye, Printer, Clock, Trash2 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useEstablishment } from '../../hooks/useEstablishment'
 import { useClients } from '../../hooks/useClients'
@@ -24,14 +24,27 @@ function ClientCard({
   form,
   onGenerate,
   onView,
+  onDelete,
+  canDelete,
 }: {
   client: Client
   form: HealthFormRow | null
   onGenerate: (id: string) => Promise<void>
   onView: (form: HealthFormRow, client: Client) => void
+  onDelete: (formId: string) => Promise<{ error: string | null }>
+  canDelete: boolean
 }) {
   const [copied, setCopied] = useState(false)
   const [generating, setGenerating] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    if (!form) return
+    if (!confirm(`Excluir a anamnese de ${client.name}? O aluno poderá preencher do zero com um novo link.`)) return
+    setDeleting(true)
+    await onDelete(form.id)
+    setDeleting(false)
+  }
 
   const copyLink = async (token: string) => {
     await navigator.clipboard.writeText(linkFor(token))
@@ -82,6 +95,16 @@ function ClientCard({
           >
             <MessageCircle size={15} />
           </a>
+          {canDelete && (
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              title="Excluir ficha"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition disabled:opacity-40"
+            >
+              <Trash2 size={15} />
+            </button>
+          )}
         </div>
       )}
 
@@ -102,14 +125,46 @@ function ClientCard({
           >
             <Eye size={15} />
           </button>
+          {canDelete && (
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              title="Excluir ficha"
+              className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition disabled:opacity-40"
+            >
+              <Trash2 size={15} />
+            </button>
+          )}
         </div>
       )}
     </li>
   )
 }
 
-function AnswersModal({ form, client, onClose }: { form: HealthFormRow | null; client: Client | null; onClose: () => void }) {
+function AnswersModal({
+  form,
+  client,
+  onClose,
+  onDelete,
+  canDelete,
+}: {
+  form: HealthFormRow | null
+  client: Client | null
+  onClose: () => void
+  onDelete: (formId: string) => Promise<{ error: string | null }>
+  canDelete: boolean
+}) {
   const a = (form?.answers ?? {}) as AnamneseAnswers
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    if (!form || !client) return
+    if (!confirm(`Excluir a anamnese de ${client.name}? O aluno poderá preencher do zero com um novo link.`)) return
+    setDeleting(true)
+    await onDelete(form.id)
+    setDeleting(false)
+  }
+
   return (
     <Modal open={!!form} onClose={onClose} title={client ? `Anamnese — ${client.name}` : 'Anamnese'}>
       {form && (
@@ -121,14 +176,25 @@ function AnswersModal({ form, client, onClose }: { form: HealthFormRow | null; c
                 ? `Preenchida em ${format(new Date(form.signed_at), "d 'de' MMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}`
                 : 'Ainda não preenchida'}
             </p>
-            <Link
-              to={`/admin/anamnese/${form.id}/imprimir`}
-              target="_blank"
-              rel="noreferrer"
-              className="shrink-0 inline-flex items-center gap-1.5 text-xs font-medium text-brand hover:underline"
-            >
-              <Printer size={14} /> Imprimir para entrevista
-            </Link>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                to={`/admin/anamnese/${form.id}/imprimir`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-brand hover:underline"
+              >
+                <Printer size={14} /> Imprimir para entrevista
+              </Link>
+              {canDelete && (
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-red-600 hover:underline disabled:opacity-40"
+                >
+                  <Trash2 size={14} /> Excluir
+                </button>
+              )}
+            </div>
           </div>
 
           <div>
@@ -224,9 +290,10 @@ function AnswersModal({ form, client, onClose }: { form: HealthFormRow | null; c
 
 export default function AnamneseAdmin() {
   const { user } = useAuth()
-  const { establishment } = useEstablishment(user?.id)
+  const { establishment, role } = useEstablishment(user?.id)
+  const canDelete = role === 'owner' || role === 'admin'
   const { clients, loading: loadingClients } = useClients(establishment?.id)
-  const { forms, loading: loadingForms, createLink, formByClient } = useHealthForms(establishment?.id)
+  const { forms, loading: loadingForms, createLink, deleteForm, formByClient } = useHealthForms(establishment?.id)
   const [search, setSearch] = useState('')
   const [viewing, setViewing] = useState<{ form: HealthFormRow; client: Client } | null>(null)
 
@@ -291,13 +358,29 @@ export default function AnamneseAdmin() {
                 form={formByClient(client.id)}
                 onGenerate={handleGenerate}
                 onView={(form, c) => setViewing({ form, client: c })}
+                onDelete={async (id) => {
+                  const r = await deleteForm(id)
+                  if (!r.error) setViewing(null)
+                  return r
+                }}
+                canDelete={canDelete}
               />
             ))}
           </ul>
         )}
       </div>
 
-      <AnswersModal form={viewing?.form ?? null} client={viewing?.client ?? null} onClose={() => setViewing(null)} />
+      <AnswersModal
+        form={viewing?.form ?? null}
+        client={viewing?.client ?? null}
+        onClose={() => setViewing(null)}
+        onDelete={async (id) => {
+          const r = await deleteForm(id)
+          if (!r.error) setViewing(null)
+          return r
+        }}
+        canDelete={canDelete}
+      />
     </div>
   )
 }

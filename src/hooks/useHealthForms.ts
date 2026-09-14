@@ -45,5 +45,13 @@ export function useHealthForms(establishmentId?: string) {
 
   const formByClient = (clientId: string) => forms.find((f) => f.client_id === clientId) ?? null
 
-  return { forms, loading, createLink, formByClient, refetch: fetchForms }
+  /** Apaga a ficha — libera o cliente para preencher do zero de novo. */
+  const deleteForm = async (formId: string) => {
+    const { error } = await supabase.from('health_forms').delete().eq('id', formId)
+    if (error) return { error: error.message }
+    await fetchForms()
+    return { error: null }
+  }
+
+  return { forms, loading, createLink, deleteForm, formByClient, refetch: fetchForms }
 }
