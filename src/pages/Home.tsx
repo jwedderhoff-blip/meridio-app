@@ -45,7 +45,7 @@ const HERO_IMAGES = [
   { src: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1600&auto=format&fit=crop&q=80', label: 'Centro de Estética', tint: HUES.plum, line: 'estetica' as SegLine },
   { src: '/pilates-aparelhos.jpg', label: 'Estúdio de Pilates', tint: HUES.sage, line: 'saude_fitness' as SegLine },
   { src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1600&auto=format&fit=crop&q=80', label: 'Academia', tint: HUES.indigo, line: 'saude_fitness' as SegLine },
-  { src: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1600&auto=format&fit=crop&q=80', label: 'Lutas & Artes Marciais', tint: HUES.clay, line: 'saude_fitness' as SegLine },
+  { src: 'https://images.unsplash.com/photo-1555597408-26bc8e548a46?w=1600&auto=format&fit=crop&q=80', label: 'Lutas & Artes Marciais', tint: HUES.clay, line: 'saude_fitness' as SegLine },
 ]
 
 /** Cópia (headline, subtítulo, CTA) específica de cada landing dedicada. */
@@ -138,7 +138,7 @@ const categories: { label: string; examples: string[]; img: string; color: strin
   { label: 'Estética & Massagem', examples: ['Limpeza de pele e depilação', 'Massagem relaxante e drenagem linfática'], img: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&auto=format&fit=crop&q=75', color: HUES.rose, line: 'estetica' },
   // Saúde & Fitness — academia, personal, lutas, avaliação, nutrição
   { label: 'Academia & Personal', examples: ['Treino funcional e musculação', 'Personal trainer e elaboração de treinos'], img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=75', color: HUES.indigo, line: 'saude_fitness' },
-  { label: 'Lutas & Artes Marciais', examples: ['Jiu-jitsu, karatê e boxe', 'Turmas por faixa etária e nível'], img: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=600&auto=format&fit=crop&q=75', color: HUES.clay, line: 'saude_fitness' },
+  { label: 'Lutas & Artes Marciais', examples: ['Jiu-jitsu, karatê e boxe', 'Turmas por faixa etária e nível'], img: 'https://images.unsplash.com/photo-1555597408-26bc8e548a46?w=600&auto=format&fit=crop&q=75', color: HUES.clay, line: 'saude_fitness' },
   { label: 'Pilates & Dança', examples: ['Pilates individual e em grupo', 'Balé, dança e zumba'], img: '/pilates-aparelhos.jpg', color: HUES.sage, line: 'saude_fitness' },
   { label: 'Avaliação Física', examples: ['Bioimpedância e antropometria', 'Prescrição de treino personalizada'], img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&auto=format&fit=crop&q=75', color: HUES.indigo, line: 'saude_fitness' },
   { label: 'Nutrição', examples: ['Consulta e plano alimentar', 'Acompanhamento nutricional'], img: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&auto=format&fit=crop&q=75', color: HUES.sage, line: 'saude_fitness' },

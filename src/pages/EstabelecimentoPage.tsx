@@ -27,7 +27,7 @@ const CATEGORY_HERO: Record<Establishment['category'], string> = {
   pilates: '/pilates-aparelhos.jpg',
   aulas_coletivas: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1200&auto=format&fit=crop&q=80',
   danca: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1200&auto=format&fit=crop&q=80',
-  lutas: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1200&auto=format&fit=crop&q=80',
+  lutas: 'https://images.unsplash.com/photo-1555597408-26bc8e548a46?w=1200&auto=format&fit=crop&q=80',
   personal: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&auto=format&fit=crop&q=80',
   academia: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&auto=format&fit=crop&q=80',
   avaliacao_fisica: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1200&auto=format&fit=crop&q=80',
