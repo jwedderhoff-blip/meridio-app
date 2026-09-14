@@ -6,11 +6,12 @@ import { HeartPulse, Search, Copy, Check, MessageCircle, AlertTriangle, Eye, Pri
 import { useAuth } from '../../context/AuthContext'
 import { useEstablishment } from '../../hooks/useEstablishment'
 import { useClients } from '../../hooks/useClients'
-import { useHealthForms, type HealthFormRow } from '../../hooks/useHealthForms'
+import { useHealthForms, type HealthFormRow, type PostureAngle } from '../../hooks/useHealthForms'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { Modal } from '../../components/ui/Modal'
 import { LifestyleChart } from '../../components/admin/LifestyleChart'
+import { PosturePhotos } from '../../components/admin/PosturePhotos'
 import { formatPhone } from '../../lib/utils'
 import { PARQ_QUESTIONS, HEALTH_HISTORY, computeLifestyleScores, type AnamneseAnswers } from '../../lib/anamnese'
 import type { Client } from '../../types'
@@ -147,12 +148,16 @@ function AnswersModal({
   onClose,
   onDelete,
   canDelete,
+  onUploadPhoto,
+  onRemovePhoto,
 }: {
   form: HealthFormRow | null
   client: Client | null
   onClose: () => void
   onDelete: (formId: string) => Promise<{ error: string | null }>
   canDelete: boolean
+  onUploadPhoto: (formId: string, angle: PostureAngle, file: File) => Promise<{ error: string | null }>
+  onRemovePhoto: (formId: string, angle: PostureAngle) => Promise<{ error: string | null }>
 }) {
   const a = (form?.answers ?? {}) as AnamneseAnswers
   const [deleting, setDeleting] = useState(false)
@@ -204,6 +209,12 @@ function AnswersModal({
             {(a.peso || a.altura) && <p className="text-xs text-gray-500">{a.peso && `${a.peso}kg`} {a.altura && `· ${a.altura}m`}</p>}
             {a.emerg_nome && <p className="text-xs text-gray-500">Emergência: {a.emerg_nome} — {a.emerg_telefone}</p>}
           </div>
+
+          <PosturePhotos
+            form={form}
+            onUpload={(angle, file) => onUploadPhoto(form.id, angle, file)}
+            onRemove={(angle) => onRemovePhoto(form.id, angle)}
+          />
 
           {form.parq_alert && (
             <p className="flex items-center gap-1.5 text-xs text-amber-700">
@@ -293,7 +304,7 @@ export default function AnamneseAdmin() {
   const { establishment, role } = useEstablishment(user?.id)
   const canDelete = role === 'owner' || role === 'admin'
   const { clients, loading: loadingClients } = useClients(establishment?.id)
-  const { forms, loading: loadingForms, createLink, deleteForm, formByClient } = useHealthForms(establishment?.id)
+  const { forms, loading: loadingForms, createLink, deleteForm, uploadPosturePhoto, removePosturePhoto, formByClient } = useHealthForms(establishment?.id)
   const [search, setSearch] = useState('')
   const [viewing, setViewing] = useState<{ form: HealthFormRow; client: Client } | null>(null)
 
@@ -371,7 +382,7 @@ export default function AnamneseAdmin() {
       </div>
 
       <AnswersModal
-        form={viewing?.form ?? null}
+        form={viewing ? (forms.find((f) => f.id === viewing.form.id) ?? viewing.form) : null}
         client={viewing?.client ?? null}
         onClose={() => setViewing(null)}
         onDelete={async (id) => {
@@ -380,6 +391,8 @@ export default function AnamneseAdmin() {
           return r
         }}
         canDelete={canDelete}
+        onUploadPhoto={uploadPosturePhoto}
+        onRemovePhoto={removePosturePhoto}
       />
     </div>
   )

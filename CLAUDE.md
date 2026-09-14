@@ -166,6 +166,18 @@ Recurso beta como o caixa: `establishments.health_form_beta_enabled`
 beta". Definição dos campos/seções em `src/lib/anamnese.ts` (fonte única
 para o formulário público e a visualização no painel).
 
+## Fotos de avaliação postural (anamnese)
+
+4 ângulos fixos (frente/costas/lateral E/lateral D), tiradas pelo profissional
+durante a entrevista — não pelo aluno no link público. Bucket **privado**
+`anamnese-fotos` no Supabase Storage (dado sensível — imagem do corpo do
+aluno); caminho `{establishment_id}/{health_form_id}/{angulo}-{timestamp}.ext`,
+RLS em `storage.objects` conferindo o 1º segmento do caminho contra
+owner/is_member/is_super_admin. Exibição sempre via `createSignedUrl`
+(nunca link público direto). Colunas `health_forms.photo_*` guardam o
+caminho de cada ângulo. UI em `src/components/admin/PosturePhotos.tsx`,
+usado no modal de respostas de `/admin/anamnese`.
+
 ## Superadmin: entrar no painel de um cliente
 
 Super Admin → Estabelecimentos → ícone "Entrar no painel" (LogIn) leva o
