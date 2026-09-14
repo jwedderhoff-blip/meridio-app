@@ -440,7 +440,7 @@ export default function Booking() {
                     <button
                       key={s.id}
                       onClick={() => selectService(s)}
-                      className={`relative flex flex-col items-center text-center bg-white rounded-2xl border-2 p-5 transition active:scale-95 ${
+                      className={`relative flex flex-col items-center text-center bg-[#fdfcfa] rounded-2xl border-2 p-5 transition active:scale-95 ${
                         selected
                           ? 'border-brand shadow-lg shadow-brand-soft'
                           : 'border-gray-100 hover:border-brand/40 hover:shadow-md shadow-sm'
@@ -483,7 +483,7 @@ export default function Booking() {
                 <button
                   key={p.id}
                   onClick={() => selectProfessional(p)}
-                  className={`w-full text-left bg-white rounded-2xl border p-4 flex items-center gap-4 transition hover:border-brand hover:shadow-sm ${
+                  className={`w-full text-left bg-[#fdfcfa] rounded-2xl border p-4 flex items-center gap-4 transition hover:border-brand hover:shadow-sm ${
                     selectedProfessional?.id === p.id
                       ? 'border-brand ring-2 ring-brand/20'
                       : 'border-gray-200'
@@ -522,7 +522,7 @@ export default function Booking() {
               </div>
             )}
 
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 mb-4">
+            <div className="bg-[#fdfcfa] rounded-2xl border border-gray-200 p-4 mb-4">
               <Calendar
                 selected={selectedDate}
                 onSelect={(d) => {
@@ -535,7 +535,7 @@ export default function Booking() {
             </div>
 
             {selectedDate && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-4">
+              <div className="bg-[#fdfcfa] rounded-2xl border border-gray-200 p-4">
                 <p className="text-sm font-semibold text-gray-700 mb-3 capitalize">
                   {format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR })}
                 </p>
@@ -552,7 +552,7 @@ export default function Booking() {
             )}
 
             {selectedDate && selectedTime && selectedService?.schedule_type === 'fixed' && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-4 mt-4">
+              <div className="bg-[#fdfcfa] rounded-2xl border border-gray-200 p-4 mt-4">
                 <div className="flex items-center gap-2 mb-3">
                   <RefreshCw size={16} className="text-brand" />
                   <p className="text-sm font-semibold text-gray-700">Matrícula recorrente</p>
@@ -573,7 +573,7 @@ export default function Booking() {
                       className={`py-2 rounded-xl text-xs sm:text-sm font-semibold transition border ${
                         recurrenceWeeks === weeks
                           ? 'bg-brand text-white border-brand'
-                          : 'bg-white text-gray-600 border-gray-200 hover:border-brand/40'
+                          : 'bg-[#fdfcfa] text-gray-600 border-gray-200 hover:border-brand/40'
                       }`}
                     >
                       {label}
@@ -694,7 +694,7 @@ export default function Booking() {
             </div>
 
             {selectedService && selectedDate && selectedTime && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-5 mb-5">
+              <div className="bg-[#fdfcfa] rounded-2xl border border-gray-200 p-5 mb-5">
                 <p className="font-semibold text-gray-900 mb-3">Resumo</p>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
@@ -760,7 +760,7 @@ export default function Booking() {
                 </button>
                 <button
                   onClick={() => setPaymentChoice('confirm')}
-                  className="w-full flex items-center justify-between px-5 py-4 bg-white border border-gray-200 rounded-2xl hover:border-gray-300 transition"
+                  className="w-full flex items-center justify-between px-5 py-4 bg-[#fdfcfa] border border-gray-200 rounded-2xl hover:border-gray-300 transition"
                 >
                   <div className="text-left">
                     <p className="font-semibold text-gray-900">Aguardar confirmação</p>

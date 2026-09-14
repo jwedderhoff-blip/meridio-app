@@ -186,7 +186,7 @@ function ServiceDetailModal({ service, slug, onClose }: ServiceDetailModalProps)
 
       {/* Sheet — desliza de baixo em mobile, centralizado em desktop */}
       <div className="fixed inset-x-0 bottom-0 z-50 sm:inset-0 sm:flex sm:items-center sm:justify-center sm:p-6">
-        <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md shadow-2xl flex flex-col max-h-[92dvh] sm:max-h-[85vh]">
+        <div className="bg-[#fdfcfa] rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md shadow-2xl flex flex-col max-h-[92dvh] sm:max-h-[85vh]">
 
           {/* Imagem do serviço — fixa no topo, não rola */}
           <div className="relative h-52 sm:h-56 overflow-hidden shrink-0 rounded-t-3xl sm:rounded-t-3xl">
@@ -365,7 +365,7 @@ export default function EstabelecimentoPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-5">
+        <div className="bg-[#fdfcfa] rounded-3xl shadow-xl border border-gray-100 p-5">
           {/* Infos de contato */}
           {(establishment.address || establishment.phone || establishment.email || establishment.instagram) && (
             <div className="space-y-2 mb-5">
@@ -441,7 +441,7 @@ export default function EstabelecimentoPage() {
                 <button
                   key={s.id}
                   onClick={() => setSelectedService(s)}
-                  className="w-full flex items-stretch bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-indigo-300 hover:shadow-md active:scale-[.99] transition overflow-hidden group text-left"
+                  className="w-full flex items-stretch bg-[#fdfcfa] rounded-2xl border border-gray-100 shadow-sm hover:border-indigo-300 hover:shadow-md active:scale-[.99] transition overflow-hidden group text-left"
                 >
                   {/* Foto do serviço */}
                   <div className="w-24 shrink-0 overflow-hidden">
