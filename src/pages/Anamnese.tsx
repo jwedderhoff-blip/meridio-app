@@ -83,8 +83,8 @@ export default function Anamnese() {
   const setField = <K extends keyof AnamneseAnswers>(key: K, value: AnamneseAnswers[K]) =>
     setA((prev) => ({ ...prev, [key]: value }))
 
-  const setHealth = (key: string, checked: boolean, detail?: string) =>
-    setA((prev) => ({ ...prev, health: { ...prev.health, [key]: { checked, detail: detail ?? prev.health?.[key]?.detail } } }))
+  const setHealth = (key: string, answer: boolean | null, detail?: string) =>
+    setA((prev) => ({ ...prev, health: { ...prev.health, [key]: { answer, detail: detail ?? prev.health?.[key]?.detail } } }))
 
   const setParq = (i: number, value: boolean) =>
     setA((prev) => {
@@ -254,18 +254,32 @@ export default function Anamnese() {
         </Section>
 
         <Section title="3. Histórico de Saúde">
-          {HEALTH_HISTORY.map((h) => (
-            <div key={h.key} className="space-y-1.5">
-              <label className="flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mt-0.5"
-                  checked={a.health?.[h.key]?.checked ?? false}
-                  onChange={(e) => setHealth(h.key, e.target.checked)}
-                />
-                {h.label}
-              </label>
-              {a.health?.[h.key]?.checked && (
+          {HEALTH_HISTORY.map((h) => {
+            const answer = a.health?.[h.key]?.answer ?? null
+            return (
+            <div key={h.key} className="space-y-1.5 border-b border-gray-50 pb-3 last:border-0">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm text-gray-700 flex-1">{h.label}</p>
+                <div className="flex gap-2 shrink-0">
+                  {(['Sim', 'Não'] as const).map((label, idx) => {
+                    const v = idx === 0
+                    const selected = answer === v
+                    return (
+                      <button
+                        key={label}
+                        type="button"
+                        onClick={() => setHealth(h.key, v)}
+                        className={`text-xs px-3 py-1.5 rounded-full border transition ${
+                          selected ? (v ? 'bg-amber-500 text-white border-amber-500' : 'bg-brand text-white border-brand') : 'bg-white text-gray-500 border-gray-200'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+              {answer === true && (
                 <input
                   className={inputCls}
                   placeholder={h.detailPlaceholder}
@@ -274,7 +288,8 @@ export default function Anamnese() {
                 />
               )}
             </div>
-          ))}
+            )
+          })}
         </Section>
 
         <Section title="4. Histórico de Atividade Física">

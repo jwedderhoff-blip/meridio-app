@@ -66,7 +66,7 @@ export interface AnamneseAnswers {
   parq?: (boolean | null)[] // true = Sim, false = Não, null = não respondido
   parq_comentario?: string
   // Histórico de saúde (checked + detalhe por item de HEALTH_HISTORY)
-  health?: Record<string, { checked: boolean; detail?: string }>
+  health?: Record<string, { answer: boolean | null; detail?: string }>
   // Histórico de atividade física
   hist_atividade?: string
   tempo_sedentarismo?: string

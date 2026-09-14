@@ -147,11 +147,11 @@ function AnswersModal({ form, client, onClose }: { form: HealthFormRow | null; c
 
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Histórico de saúde</p>
-            {HEALTH_HISTORY.filter((h) => a.health?.[h.key]?.checked).length === 0 ? (
-              <p className="text-xs text-gray-400">Nenhum item marcado.</p>
+            {HEALTH_HISTORY.filter((h) => a.health?.[h.key]?.answer === true).length === 0 ? (
+              <p className="text-xs text-gray-400">Nenhum item respondido "Sim".</p>
             ) : (
               <ul className="space-y-1.5">
-                {HEALTH_HISTORY.filter((h) => a.health?.[h.key]?.checked).map((h) => (
+                {HEALTH_HISTORY.filter((h) => a.health?.[h.key]?.answer === true).map((h) => (
                   <li key={h.key} className="text-xs text-gray-700">
                     <span className="font-medium">{h.label}</span>
                     {a.health?.[h.key]?.detail && <> — {a.health[h.key].detail}</>}
