@@ -225,3 +225,16 @@ uma vez. Duas saídas:
 - **Recomendado:** desligar "Confirm email" (é um login operacional compartilhado); ou
 - Criar/confirmar manualmente em Authentication → Users → Add user, marcando
   "Auto Confirm User".
+
+## Manual do usuário — manter sempre atualizado
+
+`docs/MANUAL.md` é o manual de uso do Meridio (para o dono/cliente da plataforma,
+não para desenvolvimento). Organizado por linha de negócio (Estética / Saúde &
+Fitness), tipo de serviço, papéis de acesso e cada módulo/cadastro do sistema.
+
+**Regra permanente**: sempre que uma funcionalidade nova for implementada e
+confirmada (ex.: "supa OK" ou o usuário validando o resultado), atualizar
+`docs/MANUAL.md` na mesma leva de commits — adicionar/editar a seção
+correspondente e uma linha no "Histórico de versões" no fim do arquivo, com a
+data do dia. Depois de atualizar, também republicar a versão em Artifact (se
+existir uma já publicada nesta conversa) para refletir a mudança.
