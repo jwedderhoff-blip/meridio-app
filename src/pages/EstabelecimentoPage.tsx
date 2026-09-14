@@ -14,18 +14,6 @@ import { formatCurrency } from '../lib/utils'
 import { CATEGORY_LABELS, CATEGORY_ICONS } from '../lib/segments'
 import type { Establishment } from '../types'
 
-// Foto de pilates trocada por uma mais fiel ao estúdio/aula real. Como não
-// há como pré-visualizar imagens neste ambiente, mantemos a foto anterior
-// (já comprovada) como fallback automático via onError — se a nova não
-// carregar, volta para a antiga sem deixar ícone de imagem quebrada.
-const PILATES_IMG_FALLBACK = 'https://images.unsplash.com/photo-1518611012118-696072aa579a'
-function pilatesImgOnError(newUrl: string, fallbackWidth: number) {
-  return (e: React.SyntheticEvent<HTMLImageElement>) => {
-    if (e.currentTarget.src.startsWith(newUrl)) {
-      e.currentTarget.src = `${PILATES_IMG_FALLBACK}?w=${fallbackWidth}&auto=format&fit=crop&q=80`
-    }
-  }
-}
 import type { Service } from '../types'
 
 // ── Imagem hero por categoria (Unsplash) ─────────────────────────────────────
@@ -36,7 +24,7 @@ const CATEGORY_HERO: Record<Establishment['category'], string> = {
   manicure: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1200&auto=format&fit=crop&q=80',
   estetica: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1200&auto=format&fit=crop&q=80',
   beleza: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1200&auto=format&fit=crop&q=80',
-  pilates: 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=1200&auto=format&fit=crop&q=80',
+  pilates: '/pilates-aparelhos.jpg',
   aulas_coletivas: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1200&auto=format&fit=crop&q=80',
   danca: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1200&auto=format&fit=crop&q=80',
   lutas: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1200&auto=format&fit=crop&q=80',
@@ -115,7 +103,7 @@ const SERVICE_RULES: { keywords: string[]; icon: LucideIcon; bg: string; text: s
   {
     keywords: ['pilates', 'yoga', 'alongamento', 'stretching'],
     icon: Dumbbell, bg: 'bg-brand-soft', text: 'text-brand',
-    img: 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=800&auto=format&fit=crop&q=75',
+    img: '/pilates-aparelhos.jpg',
   },
   {
     keywords: ['academia', 'musculação', 'funcional', 'crossfit', 'treino', 'fitness'],
@@ -206,7 +194,6 @@ function ServiceDetailModal({ service, slug, onClose }: ServiceDetailModalProps)
               src={img}
               alt={service.name}
               className="w-full h-full object-cover"
-              onError={pilatesImgOnError('https://images.unsplash.com/photo-1607962837359-5e7e89f86776', 800)}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             {/* Botão fechar */}
@@ -332,7 +319,6 @@ export default function EstabelecimentoPage() {
           src={heroImage}
           alt={categoryLabel}
           className="w-full h-full object-cover"
-          onError={pilatesImgOnError('https://images.unsplash.com/photo-1607962837359-5e7e89f86776', 1200)}
         />
         {/* Gradiente: cor da categoria sobe de baixo, escurecimento suave no topo */}
         <div
@@ -463,7 +449,6 @@ export default function EstabelecimentoPage() {
                       src={img}
                       alt={s.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                      onError={pilatesImgOnError('https://images.unsplash.com/photo-1607962837359-5e7e89f86776', 800)}
                     />
                   </div>
 
