@@ -29,6 +29,7 @@ A linha é escolhida **uma vez, no cadastro do estabelecimento**, e não pode se
 | **Superadmin** | Você, responsável pela plataforma | Gerencia todos os estabelecimentos, planos, recursos beta. Pode "Entrar no painel" de qualquer cliente para ajudar a configurar |
 
 ### Login dos colaboradores
+**Acessar:** [/admin/configuracoes](/admin/configuracoes)
 - Configurações → **Login dos colaboradores**
 - O responsável cria um e-mail/senha compartilhado (ex.: `equipe@academia.com`) e libera o acesso
 - Um único login pode ser usado por todos os colaboradores da equipe
@@ -37,11 +38,13 @@ A linha é escolhida **uma vez, no cadastro do estabelecimento**, e não pode se
 
 ## 3. Cadastro do estabelecimento
 
+**Acessar:** [/register](/register)
+
 Feito em `/register`, ou por um estabelecimento vindo de uma landing dedicada (`/estetica` ou `/saude-fitness`, que já pré-seleciona a linha).
 
 Campos: nome, linha (segmento), categoria, telefone, endereço, e-mail de acesso, senha.
 
-Depois, em **Configurações**, o responsável edita:
+Depois, em **[/admin/configuracoes](/admin/configuracoes)**, o responsável edita:
 - Nome, categoria, slug (URL pública)
 - Logo / cor da marca
 - Instagram, WhatsApp, e-mail, endereço (aparecem na página pública)
@@ -53,6 +56,8 @@ Depois, em **Configurações**, o responsável edita:
 
 ## 4. Serviços
 
+**Acessar:** [/admin/servicos](/admin/servicos)
+
 Tela: **Serviços**. Um formulário simples para Estética; para Saúde & Fitness, uma pergunta a mais define tudo:
 
 > **"Este serviço é individual ou em turma?"**
@@ -61,6 +66,9 @@ Tela: **Serviços**. Um formulário simples para Estética; para Saúde & Fitnes
 
 ### Horários fixos
 Cada serviço tem uma grade semanal de horários (ex.: segunda e quarta às 19h). Ao cadastrar uma turma com "2x por semana", o sistema avisa se os dias configurados não batem com a frequência esperada.
+
+### Profissionais
+**Acessar:** [/admin/profissionais](/admin/profissionais) — cadastro de quem atende (nome, foto, quais serviços cada um realiza).
 
 ### Matrícula em turma mensal
 Ao se matricular, o cliente:
@@ -74,6 +82,8 @@ Ao se matricular, o cliente:
 
 ## 5. Agenda
 
+**Acessar:** [/admin/agenda](/admin/agenda)
+
 Visão semanal com toggle de dia. Cada agendamento mostra cliente, serviço, status (pendente/confirmado/concluído/cancelado) e pagamento (pendente/pago/reembolsado).
 
 Um agendamento de turma recorrente tem um ícone especial — dá para **cancelar só aquela aula** ou **cancelar essa e todas as próximas** da mesma matrícula.
@@ -81,6 +91,8 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 ---
 
 ## 6. Clientes
+
+**Acessar:** [/admin/clientes](/admin/clientes)
 
 - **Cadastro manual**: botão "Novo cliente" (útil quando alguém se matricula presencialmente). Reaproveita automaticamente um cadastro existente com o mesmo telefone, evitando duplicidade.
 - **Mesclar duplicados**: quando o mesmo aluno aparece duas vezes (ex.: reservou pelo app com nome diferente do cadastro manual), o responsável mescla os dois — reservas, mensalidades e movimentações de caixa passam para o mantido.
@@ -92,6 +104,8 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 
 ## 7. Mensalidades e Financeiro
 
+**Acessar:** [/admin/financeiro](/admin/financeiro)
+
 - Gerenciadas **pela própria academia**, não pelo superadmin.
 - Tela **Financeiro**: KPIs (recebido, a receber, pagas, avulsos) + tabela de mensalidades com marcar pago/reabrir.
 - No **Dashboard**, um bloco resumo com atalho direto para o Financeiro.
@@ -99,6 +113,8 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 ---
 
 ## 8. Frente de Caixa — recurso beta 🧪
+
+**Acessar:** [/admin/caixa](/admin/caixa)
 
 > Fora do fluxo padrão do Meridio (que é focado em agendamento e vagas). Liberado estabelecimento por estabelecimento pelo superadmin, em Super Admin → Estabelecimentos → "Recursos beta".
 
@@ -117,6 +133,8 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 ---
 
 ## 9. Anamnese — recurso beta 🧪
+
+**Acessar:** [/admin/anamnese](/admin/anamnese)
 
 > Só faz sentido em Saúde & Fitness. Liberado da mesma forma que o Caixa.
 
@@ -152,6 +170,8 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 
 ## 10. Compartilhamento
 
+**Acessar:** [/admin](/admin) (Dashboard — é lá que ficam o QR code e o link para compartilhar)
+
 - Cada estabelecimento tem uma página pública (`/agendar/slug-do-estabelecimento`)
 - **QR code** estático + link + botão WhatsApp, disponível no Dashboard
 - A página pública mostra: endereço, telefone, e-mail, Instagram, botão de WhatsApp, e a lista de serviços com fotos
@@ -160,19 +180,22 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 
 ## 11. Landing pages por linha de negócio
 
-- `/` — landing geral, mostra as duas linhas
-- `/estetica` — dedicada a salão/barbearia/estética (fotos, texto e categorias específicas)
-- `/saude-fitness` — dedicada a academia/pilates/lutas/personal/nutrição
+- **[/](/)** — landing geral, mostra as duas linhas
+- **[/estetica](/estetica)** — dedicada a salão/barbearia/estética (fotos, texto e categorias específicas)
+- **[/saude-fitness](/saude-fitness)** — dedicada a academia/pilates/lutas/personal/nutrição
 - CTA de cadastro já leva a linha certa pré-selecionada no formulário
 
 ---
 
 ## 12. Super Admin
 
-- **Estabelecimentos**: lista todos, edita dados, ativa/suspende, libera recursos beta (Caixa, Anamnese)
+**Acessar:** [/superadmin](/superadmin)
+
+- **[/superadmin/estabelecimentos](/superadmin/estabelecimentos)**: lista todos, edita dados, ativa/suspende, libera recursos beta (Caixa, Anamnese)
 - **Entrar no painel**: acessa o painel de qualquer cliente para ajudar a configurar (faixa amarela avisando "Modo Super Admin" enquanto ativo)
-- **Planos e assinaturas**
-- **Cobranças por agendamento** (taxa opcional por reserva confirmada)
+- **[/superadmin/planos](/superadmin/planos)** e **[/superadmin/assinaturas](/superadmin/assinaturas)**
+- **[/superadmin/cobrancas](/superadmin/cobrancas)** por agendamento (taxa opcional por reserva confirmada)
+- **[/superadmin/notificacoes](/superadmin/notificacoes)**: histórico de notificações enviadas
 
 ---
 
@@ -192,3 +215,4 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 | 2026-09-16 | Primeira versão — cobre tudo construído até aqui: segmentação, papéis de acesso, serviços/turmas, agenda, clientes, mensalidades, Caixa (beta), Anamnese (beta, com fotos posturais e recibo), compartilhamento, landing pages, Super Admin, segurança |
 | 2026-09-15 | Papéis renomeados: "Dono" → **Responsável** (cobre também gerentes, não só o proprietário) e "Professor" → **Colaborador** (vale para qualquer segmento, não só academia/pilates — ex.: salão de beleza) |
 | 2026-09-15 | Adicionados passo a passo de "como fazer": emitir recibo no Caixa, enviar fotos de avaliação postural na Anamnese e imprimir a ficha para a entrevista |
+| 2026-09-15 | Cada setor do painel agora tem um link "Acessar:" com o caminho direto (ex.: `/admin/agenda`, `/admin/caixa`, `/superadmin/estabelecimentos`) |
