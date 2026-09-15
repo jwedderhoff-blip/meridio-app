@@ -6,7 +6,7 @@ import { Search, Download, User, ChevronDown, ChevronUp, MessageCircle, Calendar
 import { useAuth } from '../../context/AuthContext'
 import { useEstablishment } from '../../hooks/useEstablishment'
 import { useClients } from '../../hooks/useClients'
-import { useClientFinance } from '../../hooks/useMemberships'
+import { useClientFinance, type MembershipCharge } from '../../hooks/useMemberships'
 import { useHealthForms, type HealthFormRow } from '../../hooks/useHealthForms'
 import { supabase } from '../../lib/supabase'
 import { isDemo } from '../../lib/isDemo'
@@ -18,6 +18,8 @@ import { formatPhone, formatCurrency } from '../../lib/utils'
 import NewClientModal from '../../components/admin/NewClientModal'
 import MergeClientsModal from '../../components/admin/MergeClientsModal'
 import EditClientModal from '../../components/admin/EditClientModal'
+import MarkPaidModal from '../../components/admin/MarkPaidModal'
+import type { PaymentMethod } from '../../hooks/useCaixa'
 import type { Appointment, Client } from '../../types'
 
 function useClientAppointments(clientId: string | null, establishmentId: string | undefined, month: string) {
@@ -89,11 +91,21 @@ function ClientRow({
   const [month, setMonth] = useState(() => format(new Date(), 'yyyy-MM'))
   const { appointments, loading } = useClientAppointments(open ? client.id : null, establishmentId, month)
   const { memberships, charges, markPaid, markPending } = useClientFinance(establishmentId, open ? client.id : null)
+  const [payingCharge, setPayingCharge] = useState<MembershipCharge | null>(null)
 
   const emAberto = charges.filter((c) => c.status === 'pendente').reduce((s, c) => s + Number(c.amount), 0)
   const refFmt = (iso: string) => {
     const [y, mo] = iso.split('-')
     return `${['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][Number(mo) - 1]}/${y.slice(2)}`
+  }
+
+  const confirmChargePayment = async (method: PaymentMethod, emitReceipt: boolean) => {
+    if (!payingCharge) return
+    const { movementId, error } = await markPaid(payingCharge.id, method)
+    setPayingCharge(null)
+    if (!error && emitReceipt && movementId) {
+      window.open(`/admin/caixa/${movementId}/recibo`, '_blank', 'noopener')
+    }
   }
 
   const totalPago = appointments
@@ -306,7 +318,7 @@ function ClientRow({
                         </span>
                       ) : onDelete ? (
                         <button
-                          onClick={() => markPaid(c.id)}
+                          onClick={() => setPayingCharge(c)}
                           className="inline-flex items-center gap-1 text-[11px] font-medium text-green-700 bg-green-50 hover:bg-green-100 px-2 py-1 rounded-md transition"
                         >
                           <Check size={11} /> Marcar pago
@@ -351,6 +363,16 @@ function ClientRow({
             </div>
           )}
         </div>
+      )}
+
+      {payingCharge && (
+        <MarkPaidModal
+          open
+          onClose={() => setPayingCharge(null)}
+          description={`Mensalidade — ${payingCharge.services?.name ?? 'Turma'} · ${refFmt(payingCharge.reference_month)}`}
+          amount={Number(payingCharge.amount)}
+          onConfirm={confirmChargePayment}
+        />
       )}
     </li>
   )

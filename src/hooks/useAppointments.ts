@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { isDemo } from '../lib/isDemo'
 import { mockAppointments } from '../lib/mockData'
 import type { Appointment } from '../types'
+import type { PaymentMethod } from './useCaixa'
 
 export function useAppointments(establishmentId: string | undefined, date?: string) {
   const [appointments, setAppointments] = useState<Appointment[]>([])
@@ -178,16 +179,37 @@ export function useAppointments(establishmentId: string | undefined, date?: stri
     return { error: error?.message ?? null }
   }
 
-  const updatePaymentStatus = async (id: string, payment_status: Appointment['payment_status']) => {
+  const updatePaymentStatus = async (
+    id: string,
+    payment_status: Appointment['payment_status'],
+    method?: PaymentMethod
+  ) => {
     if (isDemo) {
       setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, payment_status } : a)))
-      return { error: null }
+      return { error: null, movementId: null }
     }
     const { error } = await supabase.from('appointments').update({ payment_status }).eq('id', id)
-    if (!error) {
-      setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, payment_status } : a)))
+    if (error) return { error: error.message, movementId: null }
+    setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, payment_status } : a)))
+
+    // Ao marcar como pago, também registra o recebimento no caixa — fica
+    // no histórico de movimentações e permite emitir o recibo na hora.
+    let movementId: string | null = null
+    if (payment_status === 'pago' && establishmentId) {
+      const appt = appointments.find((a) => a.id === id)
+      const svc = appt?.service as { name?: string; price?: number } | undefined
+      const { data, error: rpcError } = await supabase.rpc('register_cash_payment', {
+        p_establishment: establishmentId,
+        p_client: appt?.client_id ?? null,
+        p_charge: null,
+        p_kind: 'servico',
+        p_description: svc?.name ?? 'Serviço',
+        p_amount: svc?.price ?? 0,
+        p_method: method ?? 'dinheiro',
+      })
+      if (!rpcError) movementId = data as string
     }
-    return { error: error?.message ?? null }
+    return { error: null, movementId }
   }
 
   const deleteAppointment = async (id: string) => {

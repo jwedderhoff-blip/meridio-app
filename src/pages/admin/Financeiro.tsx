@@ -2,9 +2,11 @@ import { useMemo, useState } from 'react'
 import { CalendarClock, TrendingUp, Clock3, Wallet, Check, RotateCcw } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useEstablishment } from '../../hooks/useEstablishment'
-import { useMembershipCharges } from '../../hooks/useMemberships'
+import { useMembershipCharges, type MembershipCharge } from '../../hooks/useMemberships'
 import { useAppointments } from '../../hooks/useAppointments'
 import { formatCurrency } from '../../lib/utils'
+import MarkPaidModal from '../../components/admin/MarkPaidModal'
+import type { PaymentMethod } from '../../hooks/useCaixa'
 import type { Appointment } from '../../types'
 
 function currentMonth(): string {
@@ -37,6 +39,16 @@ export default function Financeiro() {
 
   const { charges, loading, markPaid, markPending } = useMembershipCharges(establishment?.id, month)
   const { appointments } = useAppointments(establishment?.id)
+  const [payingCharge, setPayingCharge] = useState<MembershipCharge | null>(null)
+
+  const confirmPayment = async (method: PaymentMethod, emitReceipt: boolean) => {
+    if (!payingCharge) return
+    const { movementId, error } = await markPaid(payingCharge.id, method)
+    setPayingCharge(null)
+    if (!error && emitReceipt && movementId) {
+      window.open(`/admin/caixa/${movementId}/recibo`, '_blank', 'noopener')
+    }
+  }
 
   // Mensalidades do mês
   const mensalPagas = charges.filter((c) => c.status === 'pago')
@@ -134,7 +146,7 @@ export default function Financeiro() {
                         </button>
                       ) : (
                         <button
-                          onClick={() => markPaid(c.id)}
+                          onClick={() => setPayingCharge(c)}
                           className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition"
                         >
                           <Check size={13} /> Marcar pago
@@ -148,6 +160,16 @@ export default function Financeiro() {
           </div>
         )}
       </div>
+
+      {payingCharge && (
+        <MarkPaidModal
+          open
+          onClose={() => setPayingCharge(null)}
+          description={`Mensalidade — ${payingCharge.services?.name ?? 'Turma'} · ${refLabel(payingCharge.reference_month)}`}
+          amount={Number(payingCharge.amount)}
+          onConfirm={confirmPayment}
+        />
+      )}
     </div>
   )
 }

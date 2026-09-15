@@ -10,6 +10,8 @@ import { Badge } from '../../components/ui/Badge'
 import { Modal } from '../../components/ui/Modal'
 import { Button } from '../../components/ui/Button'
 import { formatCurrency } from '../../lib/utils'
+import MarkPaidModal from '../../components/admin/MarkPaidModal'
+import type { PaymentMethod } from '../../hooks/useCaixa'
 import type { Appointment } from '../../types'
 
 export default function Agenda() {
@@ -20,6 +22,7 @@ export default function Agenda() {
   const [selectedProfessional, setSelectedProfessional] = useState<string>('all')
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null)
   const [updating, setUpdating] = useState(false)
+  const [payingAppt, setPayingAppt] = useState(false)
 
   const { professionals } = useProfessionals(establishment?.id)
   const { appointments, loading, updateStatus, updatePaymentStatus, cancelFutureInGroup, deleteAppointment } = useAppointments(establishment?.id)
@@ -41,12 +44,21 @@ export default function Agenda() {
     setUpdating(false)
   }
 
-  const handlePaymentStatus = async (payment_status: Appointment['payment_status']) => {
+  const handlePaymentStatus = async (payment_status: Appointment['payment_status'], method?: PaymentMethod) => {
     if (!selectedAppt) return
     setUpdating(true)
-    await updatePaymentStatus(selectedAppt.id, payment_status)
+    const { movementId } = await updatePaymentStatus(selectedAppt.id, payment_status, method)
     setSelectedAppt((prev) => prev ? { ...prev, payment_status } : prev)
     setUpdating(false)
+    return movementId
+  }
+
+  const confirmApptPayment = async (method: PaymentMethod, emitReceipt: boolean) => {
+    const movementId = await handlePaymentStatus('pago', method)
+    setPayingAppt(false)
+    if (emitReceipt && movementId) {
+      window.open(`/admin/caixa/${movementId}/recibo`, '_blank', 'noopener')
+    }
   }
 
   const handleCancelFutureRecurring = async () => {
@@ -248,7 +260,7 @@ export default function Agenda() {
             {/* Pagamento */}
             {!isViewer && selectedAppt.payment_status !== 'pago' && (
               <Button
-                onClick={() => handlePaymentStatus('pago')}
+                onClick={() => setPayingAppt(true)}
                 loading={updating}
                 className="w-full bg-green-600 hover:bg-green-700"
               >
@@ -327,6 +339,16 @@ export default function Agenda() {
           </div>
         )}
       </Modal>
+
+      {payingAppt && selectedAppt && (
+        <MarkPaidModal
+          open
+          onClose={() => setPayingAppt(false)}
+          description={apptService?.name ?? 'Serviço'}
+          amount={apptService?.price ?? 0}
+          onConfirm={confirmApptPayment}
+        />
+      )}
     </div>
   )
 }

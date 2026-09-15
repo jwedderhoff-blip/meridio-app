@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import type { PaymentMethod } from './useCaixa'
 
 export interface MembershipCharge {
   id: string
@@ -14,6 +15,36 @@ export interface MembershipCharge {
   created_at: string
   clients?: { name: string } | null
   services?: { name: string; price_mode?: string } | null
+}
+
+const MONTH_LABEL = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+function chargeDescription(charge: MembershipCharge): string {
+  const [y, m] = charge.reference_month.split('-')
+  const mes = `${MONTH_LABEL[Number(m) - 1]}/${y.slice(2)}`
+  return `Mensalidade ${charge.services?.name ?? 'turma'} — ${mes}`
+}
+
+/**
+ * Registra o recebimento da mensalidade no caixa (fica no histórico de
+ * movimentações e gera o recibo) e marca a cobrança como paga. Devolve o
+ * id da movimentação para abrir o recibo na hora, se o usuário quiser.
+ */
+async function registerChargePayment(
+  establishmentId: string,
+  charge: MembershipCharge,
+  method: PaymentMethod
+): Promise<{ movementId: string | null; error: string | null }> {
+  const { data, error } = await supabase.rpc('register_cash_payment', {
+    p_establishment: establishmentId,
+    p_client: charge.client_id,
+    p_charge: charge.id,
+    p_kind: 'mensalidade',
+    p_description: chargeDescription(charge),
+    p_amount: charge.amount,
+    p_method: method,
+  })
+  if (error) return { movementId: null, error: error.message }
+  return { movementId: data as string, error: null }
 }
 
 /**
@@ -41,17 +72,21 @@ export function useMembershipCharges(establishmentId?: string, month?: string) {
 
   useEffect(() => { void fetchCharges() }, [fetchCharges])
 
-  const setStatus = async (id: string, status: MembershipCharge['status']) => {
-    // Atualização otimista
-    setCharges((prev) => prev.map((c) => (c.id === id ? { ...c, status, paid_at: status === 'pago' ? new Date().toISOString() : null } : c)))
-    await supabase
-      .from('membership_charges')
-      .update({ status, paid_at: status === 'pago' ? new Date().toISOString() : null })
-      .eq('id', id)
+  const markPending = async (id: string) => {
+    setCharges((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'pendente', paid_at: null } : c)))
+    await supabase.from('membership_charges').update({ status: 'pendente', paid_at: null }).eq('id', id)
   }
 
-  const markPaid = (id: string) => setStatus(id, 'pago')
-  const markPending = (id: string) => setStatus(id, 'pendente')
+  const markPaid = async (id: string, method: PaymentMethod) => {
+    if (!establishmentId) return { movementId: null, error: 'Sem estabelecimento' }
+    const charge = charges.find((c) => c.id === id)
+    if (!charge) return { movementId: null, error: 'Cobrança não encontrada' }
+    const { movementId, error } = await registerChargePayment(establishmentId, charge, method)
+    if (!error) {
+      setCharges((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'pago', paid_at: new Date().toISOString() } : c)))
+    }
+    return { movementId, error }
+  }
 
   return { charges, loading, markPaid, markPending, refetch: fetchCharges }
 }
@@ -100,19 +135,21 @@ export function useClientFinance(establishmentId?: string, clientId?: string | n
 
   useEffect(() => { void fetchAll() }, [fetchAll])
 
-  const setStatus = async (id: string, status: MembershipCharge['status']) => {
-    setCharges((prev) => prev.map((c) => (c.id === id ? { ...c, status, paid_at: status === 'pago' ? new Date().toISOString() : null } : c)))
-    await supabase
-      .from('membership_charges')
-      .update({ status, paid_at: status === 'pago' ? new Date().toISOString() : null })
-      .eq('id', id)
+  const markPending = async (id: string) => {
+    setCharges((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'pendente', paid_at: null } : c)))
+    await supabase.from('membership_charges').update({ status: 'pendente', paid_at: null }).eq('id', id)
   }
 
-  return {
-    memberships,
-    charges,
-    loading,
-    markPaid: (id: string) => setStatus(id, 'pago'),
-    markPending: (id: string) => setStatus(id, 'pendente'),
+  const markPaid = async (id: string, method: PaymentMethod) => {
+    if (!establishmentId) return { movementId: null, error: 'Sem estabelecimento' }
+    const charge = charges.find((c) => c.id === id)
+    if (!charge) return { movementId: null, error: 'Cobrança não encontrada' }
+    const { movementId, error } = await registerChargePayment(establishmentId, charge, method)
+    if (!error) {
+      setCharges((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'pago', paid_at: new Date().toISOString() } : c)))
+    }
+    return { movementId, error }
   }
+
+  return { memberships, charges, loading, markPaid, markPending }
 }
