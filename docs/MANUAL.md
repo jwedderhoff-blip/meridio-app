@@ -88,6 +88,8 @@ Visão semanal com toggle de dia. Cada agendamento mostra cliente, serviço, sta
 
 Um agendamento de turma recorrente tem um ícone especial — dá para **cancelar só aquela aula** ou **cancelar essa e todas as próximas** da mesma matrícula.
 
+Ao clicar em **"Marcar como pago"**, o sistema pergunta a forma de pagamento e se quer **emitir o recibo na hora** (com o valor e o nome do serviço já preenchidos) — ver item 8, "Como emitir um recibo".
+
 ---
 
 ## 6. Clientes
@@ -99,6 +101,7 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 - **Editar**: nome, telefone, e-mail, observações.
 - **Excluir**: só se não houver reservas/matrículas vinculadas.
 - Cada cliente mostra: aulas matriculadas, situação financeira (mensalidades em aberto/pagas), e — se o módulo estiver ativo — status da anamnese.
+- **Marcar mensalidade como paga**: direto no card do cliente, também pergunta forma de pagamento e se quer emitir o recibo na hora.
 
 ---
 
@@ -109,6 +112,7 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 - Gerenciadas **pela própria academia**, não pelo superadmin.
 - Tela **Financeiro**: KPIs (recebido, a receber, pagas, avulsos) + tabela de mensalidades com marcar pago/reabrir.
 - No **Dashboard**, um bloco resumo com atalho direto para o Financeiro.
+- Ao clicar em **"Marcar pago"**, o sistema pede a forma de pagamento e pergunta se quer **emitir o recibo na hora** — o recebimento também passa a aparecer no histórico de movimentações da Frente de Caixa (item 8), mesmo sem o recurso beta liberado.
 
 ---
 
@@ -123,6 +127,7 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 - Lista de movimentações do dia com total
 - **Recibo**: cada recebimento tem um botão para gerar um recibo pronto pra imprimir/PDF, com valor por extenso, dados do estabelecimento e linha de assinatura
 - Operado por responsável **e** colaboradores
+- Também recebe automaticamente os pagamentos marcados em **Financeiro**, no cadastro do **Cliente** e na **Agenda** — não é preciso lançar de novo no Caixa
 
 ### Como emitir um recibo
 1. Tela **Caixa** → localize a movimentação recebida na lista do dia
@@ -216,3 +221,4 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 | 2026-09-15 | Papéis renomeados: "Dono" → **Responsável** (cobre também gerentes, não só o proprietário) e "Professor" → **Colaborador** (vale para qualquer segmento, não só academia/pilates — ex.: salão de beleza) |
 | 2026-09-15 | Adicionados passo a passo de "como fazer": emitir recibo no Caixa, enviar fotos de avaliação postural na Anamnese e imprimir a ficha para a entrevista |
 | 2026-09-15 | Cada setor do painel agora tem um link "Acessar:" com o caminho direto (ex.: `/admin/agenda`, `/admin/caixa`, `/superadmin/estabelecimentos`) |
+| 2026-09-15 | Ao marcar mensalidade (Financeiro, Clientes) ou serviço avulso (Agenda) como pago, o sistema pergunta a forma de pagamento e se quer emitir o recibo na hora — o recebimento passa a aparecer também no histórico da Frente de Caixa |
