@@ -1,7 +1,7 @@
 # Manual do Meridio
 
 > Manual de uso — vivo, atualizado a cada funcionalidade nova do sistema.
-> Última atualização: 2026-09-16
+> Última atualização: 2026-09-15
 
 ---
 
@@ -14,22 +14,24 @@ O Meridio é uma plataforma de agendamento e gestão para negócios de dois tipo
 | **Estética** | Salão de beleza, barbearia, manicure, centro de estética | Sempre **individual**, por sessão |
 | **Saúde & Fitness** | Academia, pilates, lutas, personal trainer, avaliação física, nutrição | **Individual ou em turma**, por sessão ou mensalidade |
 
-A linha é escolhida **uma vez, no cadastro do estabelecimento**, e não pode ser trocada depois pelo próprio dono (evita conflito de configuração). Ela define quais categorias, campos e recursos aparecem no painel daquele estabelecimento.
+A linha é escolhida **uma vez, no cadastro do estabelecimento**, e não pode ser trocada depois pelo próprio responsável (evita conflito de configuração). Ela define quais categorias, campos e recursos aparecem no painel daquele estabelecimento.
 
 ---
 
 ## 2. Papéis de acesso
 
+> **Responsável** substitui "dono" — pode ser o proprietário do negócio ou um gerente responsável pela gestão. **Colaborador** substitui "professor" — vale tanto para professor/instrutor (academia, pilates) quanto para atendente/profissional de um salão, por exemplo.
+
 | Papel | Como entra | O que pode fazer |
 |---|---|---|
-| **Dono** | Login normal, é quem cadastrou o estabelecimento | Tudo: agenda, serviços, clientes, financeiro, configurações, caixa, anamnese |
-| **Professor / visualizador** | Login compartilhado, liberado pelo dono em Configurações | Vê Dashboard, Agenda, Serviços, Clientes (sem excluir), Caixa (se liberado), Anamnese (se liberado). **Não** cancela agendamento, não exclui clientes, não cria/edita serviços |
-| **Superadmin** | Você, dono da plataforma | Gerencia todos os estabelecimentos, planos, recursos beta. Pode "Entrar no painel" de qualquer cliente para ajudar a configurar |
+| **Responsável** | Login normal, é quem cadastrou o estabelecimento (ou foi designado como gestor) | Tudo: agenda, serviços, clientes, financeiro, configurações, caixa, anamnese |
+| **Colaborador / visualizador** | Login compartilhado, liberado pelo responsável em Configurações | Vê Dashboard, Agenda, Serviços, Clientes (sem excluir), Caixa (se liberado), Anamnese (se liberado). **Não** cancela agendamento, não exclui clientes, não cria/edita serviços |
+| **Superadmin** | Você, responsável pela plataforma | Gerencia todos os estabelecimentos, planos, recursos beta. Pode "Entrar no painel" de qualquer cliente para ajudar a configurar |
 
-### Login dos professores
-- Configurações → **Login dos professores**
-- O dono cria um e-mail/senha compartilhado (ex.: `professores@academia.com`) e libera o acesso
-- Um único login pode ser usado por todos os professores da equipe
+### Login dos colaboradores
+- Configurações → **Login dos colaboradores**
+- O responsável cria um e-mail/senha compartilhado (ex.: `equipe@academia.com`) e libera o acesso
+- Um único login pode ser usado por todos os colaboradores da equipe
 
 ---
 
@@ -39,13 +41,13 @@ Feito em `/register`, ou por um estabelecimento vindo de uma landing dedicada (`
 
 Campos: nome, linha (segmento), categoria, telefone, endereço, e-mail de acesso, senha.
 
-Depois, em **Configurações**, o dono edita:
+Depois, em **Configurações**, o responsável edita:
 - Nome, categoria, slug (URL pública)
 - Logo / cor da marca
 - Instagram, WhatsApp, e-mail, endereço (aparecem na página pública)
 - Tema do painel (claro/escuro/automático)
 - Horário de funcionamento (por dia da semana)
-- Login dos professores
+- Login dos colaboradores
 
 ---
 
@@ -81,7 +83,7 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 ## 6. Clientes
 
 - **Cadastro manual**: botão "Novo cliente" (útil quando alguém se matricula presencialmente). Reaproveita automaticamente um cadastro existente com o mesmo telefone, evitando duplicidade.
-- **Mesclar duplicados**: quando o mesmo aluno aparece duas vezes (ex.: reservou pelo app com nome diferente do cadastro manual), o dono mescla os dois — reservas, mensalidades e movimentações de caixa passam para o mantido.
+- **Mesclar duplicados**: quando o mesmo aluno aparece duas vezes (ex.: reservou pelo app com nome diferente do cadastro manual), o responsável mescla os dois — reservas, mensalidades e movimentações de caixa passam para o mantido.
 - **Editar**: nome, telefone, e-mail, observações.
 - **Excluir**: só se não houver reservas/matrículas vinculadas.
 - Cada cliente mostra: aulas matriculadas, situação financeira (mensalidades em aberto/pagas), e — se o módulo estiver ativo — status da anamnese.
@@ -104,7 +106,7 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 - Forma de pagamento: dinheiro, Pix, cartão de crédito/débito, outro
 - Lista de movimentações do dia com total
 - **Recibo**: cada recebimento tem um botão para gerar um recibo pronto pra imprimir/PDF, com valor por extenso, dados do estabelecimento e linha de assinatura
-- Operado por dono **e** professores
+- Operado por responsável **e** colaboradores
 
 ---
 
@@ -115,7 +117,7 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 Ficha de saúde baseada no modelo PAR-Q + histórico de saúde, usada antes do início de uma atividade física (pilates, academia, lutas).
 
 **Fluxo:**
-1. Dono/professor gera um link em `/admin/anamnese` → clica **"Gerar link"**
+1. Responsável/colaborador gera um link em `/admin/anamnese` → clica **"Gerar link"**
 2. Copia ou envia direto por WhatsApp
 3. Aluno preenche sozinho, sem precisar de login: identificação, PAR-Q (7 perguntas Sim/Não), histórico de saúde (com Sim/Não + detalhe), atividade física, hábitos de vida, objetivos, e assina digitando o nome
 4. Painel mostra status: **Pendente** / **Preenchida** (com alerta se algum PAR-Q foi "Sim")
@@ -124,7 +126,7 @@ Ficha de saúde baseada no modelo PAR-Q + histórico de saúde, usada antes do i
 - **Gráfico de estilo de vida**: 5 dimensões (atividade física, sono, estresse, hidratação, hábitos), cada uma com cor e rótulo — Bom / Regular / Atenção — e legenda
 - **Fotos de avaliação postural**: 4 ângulos (frente, costas, lateral E/D), enviadas pelo profissional durante a entrevista. Guardadas em local privado, só acessíveis por URL temporária
 - **Modo entrevista / impressão**: página separada, sempre em fundo claro, com todas as respostas + linhas em branco para anotação (avaliação postural, testes funcionais, plano de treino) + linha de assinatura do aluno e do avaliador
-- **Excluir e refazer**: dono/superadmin pode apagar uma ficha para o aluno preencher do zero
+- **Excluir e refazer**: responsável/superadmin pode apagar uma ficha para o aluno preencher do zero
 
 Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pendente").
 
@@ -170,3 +172,4 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 | Data | O que entrou |
 |---|---|
 | 2026-09-16 | Primeira versão — cobre tudo construído até aqui: segmentação, papéis de acesso, serviços/turmas, agenda, clientes, mensalidades, Caixa (beta), Anamnese (beta, com fotos posturais e recibo), compartilhamento, landing pages, Super Admin, segurança |
+| 2026-09-15 | Papéis renomeados: "Dono" → **Responsável** (cobre também gerentes, não só o proprietário) e "Professor" → **Colaborador** (vale para qualquer segmento, não só academia/pilates — ex.: salão de beleza) |
