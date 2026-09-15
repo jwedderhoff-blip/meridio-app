@@ -1,7 +1,7 @@
 # Manual do Meridio
 
 > Manual de uso — vivo, atualizado a cada funcionalidade nova do sistema.
-> Última atualização: 2026-09-15
+> Última atualização: 2026-09-15 (instruções passo a passo de recibo e fotos)
 
 ---
 
@@ -108,6 +108,12 @@ Um agendamento de turma recorrente tem um ícone especial — dá para **cancela
 - **Recibo**: cada recebimento tem um botão para gerar um recibo pronto pra imprimir/PDF, com valor por extenso, dados do estabelecimento e linha de assinatura
 - Operado por responsável **e** colaboradores
 
+### Como emitir um recibo
+1. Tela **Caixa** → localize a movimentação recebida na lista do dia
+2. Clique no ícone de recibo (📄) ao lado da movimentação
+3. Abre em nova aba: recibo pronto com número, valor em número e por extenso, forma de pagamento, data, dados do estabelecimento e linha de assinatura
+4. Use **Ctrl+P** (ou o menu do navegador) para imprimir ou salvar como PDF — a página força fundo branco automaticamente, mesmo com o tema escuro ativo, para não gastar tinta/ficar ilegível na impressão
+
 ---
 
 ## 9. Anamnese — recurso beta 🧪
@@ -129,6 +135,18 @@ Ficha de saúde baseada no modelo PAR-Q + histórico de saúde, usada antes do i
 - **Excluir e refazer**: responsável/superadmin pode apagar uma ficha para o aluno preencher do zero
 
 Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pendente").
+
+### Como enviar as fotos de avaliação postural
+1. Tela **Anamnese** → abra a ficha já **preenchida** do aluno (ícone de olho)
+2. No topo do modal, aparecem 4 quadros: **Frente, Costas, Lateral esquerda, Lateral direita**
+3. Toque em cada quadro para tirar a foto na hora (celular abre a câmera) ou escolher um arquivo já salvo
+4. A foto sobe automaticamente e fica visível ali mesmo — pode trocar (substitui a anterior) ou remover a qualquer momento
+5. As fotos **nunca** ficam em link público: são acessadas por um link temporário que expira em poucos minutos, e só quem tem acesso ao estabelecimento (responsável, colaborador ou superadmin) consegue visualizar
+
+### Como imprimir para a entrevista
+1. Na ficha preenchida, clique em **"Imprimir para entrevista"**
+2. Abre uma página separada, sempre em fundo claro, com identificação, gráfico de estilo de vida, todas as respostas e linhas em branco para o profissional anotar durante o atendimento
+3. Use **Ctrl+P** para imprimir ou salvar como PDF
 
 ---
 
@@ -173,3 +191,4 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 |---|---|
 | 2026-09-16 | Primeira versão — cobre tudo construído até aqui: segmentação, papéis de acesso, serviços/turmas, agenda, clientes, mensalidades, Caixa (beta), Anamnese (beta, com fotos posturais e recibo), compartilhamento, landing pages, Super Admin, segurança |
 | 2026-09-15 | Papéis renomeados: "Dono" → **Responsável** (cobre também gerentes, não só o proprietário) e "Professor" → **Colaborador** (vale para qualquer segmento, não só academia/pilates — ex.: salão de beleza) |
+| 2026-09-15 | Adicionados passo a passo de "como fazer": emitir recibo no Caixa, enviar fotos de avaliação postural na Anamnese e imprimir a ficha para a entrevista |
