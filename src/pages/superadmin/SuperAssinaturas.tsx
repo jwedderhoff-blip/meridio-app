@@ -1,7 +1,8 @@
-import { useAllSubscriptions, useAllEstablishments, usePlans } from '../../hooks/useSuperAdmin'
+import { useAllSubscriptions, useAllEstablishments, usePlans, type Subscription } from '../../hooks/useSuperAdmin'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { Calendar, Check, X } from 'lucide-react'
+import { Calendar, Check, X, FileText } from 'lucide-react'
 
 const STATUS_COLORS: Record<string, string> = {
   trial: 'bg-amber-100 text-amber-700',
@@ -32,18 +33,19 @@ function expiryInfo(expiresAt: string | null): {
   return { label: dateStr, cls: 'text-green-700' }
 }
 
-function calcExpiresAt(planId: string, plans: ReturnType<typeof usePlans>['plans']): string | null {
+/** Calcula o vencimento a partir de uma data-base (hoje, por padrão) somando o ciclo do plano contratado. */
+function calcExpiresAt(planId: string, plans: ReturnType<typeof usePlans>['plans'], from: Date = new Date()): string | null {
   const plan = plans.find((p) => p.id === planId)
   if (!plan) return null
   // Plano por agendamento é contínuo: cobra por atendimento, não tem validade.
   if (plan.billing_type === 'por_agendamento') return null
-  const now = new Date()
+  const base = new Date(from)
   if (plan.billing_type === 'package' && plan.package_days) {
-    now.setDate(now.getDate() + plan.package_days)
+    base.setDate(base.getDate() + plan.package_days)
   } else {
-    now.setDate(now.getDate() + (plan.billing_cycle_days ?? 30))
+    base.setDate(base.getDate() + (plan.billing_cycle_days ?? 30))
   }
-  return now.toISOString()
+  return base.toISOString()
 }
 
 export default function SuperAssinaturas() {
@@ -54,6 +56,8 @@ export default function SuperAssinaturas() {
   const [selectedPlan, setSelectedPlan] = useState<Record<string, string>>({})
   const [editingExpiry, setEditingExpiry] = useState<string | null>(null)
   const [expiryInput, setExpiryInput] = useState('')
+  const [editingStart, setEditingStart] = useState<string | null>(null)
+  const [startInput, setStartInput] = useState('')
 
   const noSubscription = establishments.filter(
     (e) => !subscriptions.some((s) => s.establishment_id === e.id)
@@ -93,6 +97,24 @@ export default function SuperAssinaturas() {
       await updateSubscription(id, { expires_at: iso })
     }
     setEditingExpiry(null)
+  }
+
+  const startEditStart = (id: string, current: string) => {
+    setEditingStart(id)
+    setStartInput(current.slice(0, 10))
+  }
+
+  /** Muda a data de início e recalcula o vencimento a partir do plano contratado, na mesma data. */
+  const saveStart = async (s: Subscription) => {
+    if (startInput) {
+      const startDate = new Date(startInput + 'T00:00:00')
+      const updates: Partial<Subscription> = { started_at: startDate.toISOString() }
+      if (s.plan_id) {
+        updates.expires_at = calcExpiresAt(s.plan_id, plans, startDate)
+      }
+      await updateSubscription(s.id, updates)
+    }
+    setEditingStart(null)
   }
 
   return (
@@ -214,8 +236,38 @@ export default function SuperAssinaturas() {
                             ))}
                           </select>
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-xs">
-                          {new Date(s.started_at).toLocaleDateString('pt-BR')}
+                        <td className="px-4 py-3 text-xs">
+                          {editingStart === s.id ? (
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="date"
+                                value={startInput}
+                                onChange={(e) => setStartInput(e.target.value)}
+                                className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                              />
+                              <button
+                                onClick={() => saveStart(s)}
+                                className="p-1 text-green-600 hover:bg-green-50 rounded"
+                              >
+                                <Check size={13} />
+                              </button>
+                              <button
+                                onClick={() => setEditingStart(null)}
+                                className="p-1 text-gray-400 hover:bg-gray-100 rounded"
+                              >
+                                <X size={13} />
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => startEditStart(s.id, s.started_at)}
+                              className="flex items-center gap-1.5 group"
+                              title="Alterar data de início (recalcula o vencimento pelo plano contratado)"
+                            >
+                              <span className="text-gray-400">{new Date(s.started_at).toLocaleDateString('pt-BR')}</span>
+                              <Calendar size={11} className="text-gray-300 group-hover:text-indigo-400 transition" />
+                            </button>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-xs">
                           {editingExpiry === s.id ? (
@@ -250,21 +302,34 @@ export default function SuperAssinaturas() {
                           )}
                         </td>
                         <td className="px-4 py-3 text-right">
-                          {s.status === 'active' ? (
-                            <button
-                              onClick={() => updateSubscription(s.id, { status: 'suspended' })}
-                              className="text-xs px-2.5 py-1 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition font-medium"
-                            >
-                              Suspender
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => updateSubscription(s.id, { status: 'active' })}
-                              className="text-xs px-2.5 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition font-medium"
-                            >
-                              Ativar
-                            </button>
-                          )}
+                          <div className="flex items-center justify-end gap-1.5">
+                            {s.plan_id && (
+                              <Link
+                                to={`/superadmin/assinaturas/${s.id}/contrato`}
+                                target="_blank"
+                                rel="noreferrer"
+                                title="Gerar contrato"
+                                className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition"
+                              >
+                                <FileText size={15} />
+                              </Link>
+                            )}
+                            {s.status === 'active' ? (
+                              <button
+                                onClick={() => updateSubscription(s.id, { status: 'suspended' })}
+                                className="text-xs px-2.5 py-1 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition font-medium"
+                              >
+                                Suspender
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => updateSubscription(s.id, { status: 'active' })}
+                                className="text-xs px-2.5 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition font-medium"
+                              >
+                                Ativar
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     )

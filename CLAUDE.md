@@ -153,6 +153,25 @@ não o total do ciclo. Usado em `src/pages/superadmin/SuperPlanos.tsx` (mostra
 `billing_cycle_days` — não mais 30 fixo — para calcular a validade ao atribuir
 o plano a um estabelecimento). Também refletido na página pública `/planos`.
 
+Em Super Admin → Assinaturas, a data de **Início** também é editável (mesmo
+padrão de clique do Vencimento) — ao mudar, `saveStart` recalcula o Vencimento
+a partir da nova data, somando o ciclo do plano contratado (`calcExpiresAt`
+agora aceita uma data-base opcional, em vez de assumir sempre "hoje").
+
+## Contrato de assinatura (Super Admin → Assinaturas)
+
+Cada assinatura com plano atribuído tem um ícone de contrato (📄) que abre
+`/superadmin/assinaturas/:subscriptionId/contrato` — página standalone,
+fora do `SuperAdminLayout`, mesmo padrão de impressão do recibo do Caixa
+(força `data-theme="light"`). Gera um contrato de prestação de serviços
+simples com os dados do estabelecimento e do plano contratado (valor,
+ciclo de cobrança, vigência, limites). **Os dados da CONTRATADA (razão
+social, CNPJ/CPF, endereço) ficam em branco ("A PREENCHER") até serem
+preenchidos manualmente** na constante `PLATFORM` no topo de
+`src/pages/superadmin/ContratoAssinatura.tsx` — nunca inventar esses dados.
+É um modelo padrão, sem validação jurídica; o rodapé do contrato já avisa
+isso e recomenda revisão por advogado antes de uso formal.
+
 ## Auditoria de segurança (2026-09-14)
 
 Achado crítico: `establishments`, `professionals`, `professional_services`,

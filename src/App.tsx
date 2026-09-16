@@ -35,6 +35,7 @@ const SuperPlanos = lazy(() => import('./pages/superadmin/SuperPlanos'))
 const SuperAssinaturas = lazy(() => import('./pages/superadmin/SuperAssinaturas'))
 const SuperCobrancas = lazy(() => import('./pages/superadmin/SuperCobrancas'))
 const SuperNotificacoes = lazy(() => import('./pages/superadmin/SuperNotificacoes'))
+const ContratoAssinatura = lazy(() => import('./pages/superadmin/ContratoAssinatura'))
 const Demo = lazy(() => import('./pages/Demo'))
 
 function DemoFallback() {
@@ -251,6 +252,10 @@ function AppRoutes() {
         </Route>
       </Route>
       <Route element={<SuperAdminRoute />}>
+        <Route
+          path="/superadmin/assinaturas/:subscriptionId/contrato"
+          element={<Suspense fallback={<SuperAdminFallback />}><ContratoAssinatura /></Suspense>}
+        />
         <Route path="/superadmin" element={<Suspense fallback={<SuperAdminFallback />}><SuperAdminLayout /></Suspense>}>
           <Route index element={<SuperDashboard />} />
           <Route path="estabelecimentos" element={<SuperEstabelecimentos />} />
