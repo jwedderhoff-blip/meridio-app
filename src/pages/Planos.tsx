@@ -8,20 +8,27 @@ import { HUES, INK, INK_SOFT, MUTED, PAPER, LINE, SOFT_LINE } from './demo/data'
 import { SEGMENTS, type Segment } from '../lib/segments'
 import type { Plan } from '../hooks/useSuperAdmin'
 
+const CYCLE_LABELS: Record<number, string> = { 30: 'mensal', 90: 'trimestral', 180: 'semestral', 365: 'anual' }
+
 /** Rótulo do preço conforme o tipo de cobrança do plano. */
-function priceLabel(plan: Plan): { value: string; suffix: string } {
+function priceLabel(plan: Plan): { value: string; suffix: string; cycleNote: string } {
   if (plan.billing_type === 'por_agendamento') {
     const v = plan.booking_fee_type === 'percentual'
       ? `${plan.booking_fee_value ?? 0}%`
       : formatCurrency(Number(plan.booking_fee_value ?? 0))
-    return { value: v, suffix: 'por atendimento' }
+    return { value: v, suffix: 'por atendimento', cycleNote: '' }
   }
   if (plan.billing_type === 'package') {
     const v = !plan.price_package ? 'Grátis' : formatCurrency(plan.price_package)
-    return { value: v, suffix: plan.package_days ? `a cada ${plan.package_days} dias` : 'por pacote' }
+    return { value: v, suffix: plan.package_days ? `a cada ${plan.package_days} dias` : 'por pacote', cycleNote: '' }
   }
   const v = plan.price_monthly === 0 ? 'Grátis' : formatCurrency(plan.price_monthly)
-  return { value: v, suffix: plan.price_monthly === 0 ? '' : 'por mês' }
+  if (plan.price_monthly === 0) return { value: v, suffix: '', cycleNote: '' }
+  const days = plan.billing_cycle_days ?? 30
+  const cycle = CYCLE_LABELS[days] ?? `a cada ${days} dias`
+  const months = Math.max(1, Math.round(days / 30))
+  const cycleNote = days === 30 ? '' : `cobrança ${cycle} · total ${formatCurrency(plan.price_monthly * months)}`
+  return { value: v, suffix: 'por mês', cycleNote }
 }
 
 function limitText(n: number | null, singular: string, plural: string): string {
@@ -138,8 +145,13 @@ export default function Planos() {
                   )}
 
                   <div className="mb-5">
-                    <span className="font-display text-3xl tracking-tight" style={{ color: INK }}>{price.value}</span>
-                    {price.suffix && <span className="text-sm ml-1.5" style={{ color: MUTED }}>{price.suffix}</span>}
+                    <div>
+                      <span className="font-display text-3xl tracking-tight" style={{ color: INK }}>{price.value}</span>
+                      {price.suffix && <span className="text-sm ml-1.5" style={{ color: MUTED }}>{price.suffix}</span>}
+                    </div>
+                    {price.cycleNote && (
+                      <p className="text-xs mt-1" style={{ color: MUTED }}>{price.cycleNote}</p>
+                    )}
                   </div>
 
                   <ul className="space-y-2.5 mb-6 flex-1">

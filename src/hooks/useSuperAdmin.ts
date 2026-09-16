@@ -8,6 +8,8 @@ export interface Plan {
   description: string | null
   billing_type: 'monthly' | 'package' | 'por_agendamento'
   price_monthly: number
+  /** Só para billing_type 'monthly': de quanto em quanto tempo a cobrança se repete (30, 90, 180...). */
+  billing_cycle_days: number | null
   price_package: number | null
   package_days: number | null
   max_services: number | null

@@ -139,6 +139,20 @@ exige dono **e** beta liberado); item de nav em `AdminLayout.tsx` some se a flag
 estiver desligada; atalhos do Dashboard para o Financeiro só aparecem com a flag
 ligada.
 
+## Ciclo de cobrança dos planos (Super Admin → Planos)
+
+O app **não cobra automaticamente** as assinaturas dos estabelecimentos (não há
+gateway integrado para isso) — o superadmin cobra manualmente (Pix, etc.) e
+controla acesso/validade em Super Admin → Assinaturas. Para planos com
+`billing_type = 'monthly'`, `plans.billing_cycle_days` (int, default 30) guarda
+de quanto em quanto tempo essa cobrança se repete (30 = mensal, 90 = trimestral,
+180 = semestral...) — `price_monthly` continua sendo sempre o valor **por mês**,
+não o total do ciclo. Usado em `src/pages/superadmin/SuperPlanos.tsx` (mostra
+"total do ciclo" = `price_monthly × meses do ciclo`) e em
+`src/pages/superadmin/SuperAssinaturas.tsx` (`calcExpiresAt` soma
+`billing_cycle_days` — não mais 30 fixo — para calcular a validade ao atribuir
+o plano a um estabelecimento). Também refletido na página pública `/planos`.
+
 ## Auditoria de segurança (2026-09-14)
 
 Achado crítico: `establishments`, `professionals`, `professional_services`,

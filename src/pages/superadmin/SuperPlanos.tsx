@@ -14,6 +14,7 @@ interface PlanForm {
   description: string
   billing_type: BillingType
   price_monthly: number | string
+  billing_cycle_days: number | string
   price_package: number | string
   package_days: number | string
   max_services: number | string
@@ -32,6 +33,7 @@ function emptyForm(): PlanForm {
     description: '',
     billing_type: 'monthly',
     price_monthly: '',
+    billing_cycle_days: 30,
     price_package: '',
     package_days: 30,
     max_services: '',
@@ -52,6 +54,7 @@ function formToPayload(form: PlanForm): Omit<Plan, 'id' | 'created_at'> {
     description: form.description || null,
     billing_type: form.billing_type,
     price_monthly: form.billing_type === 'monthly' ? Number(form.price_monthly) : 0,
+    billing_cycle_days: form.billing_type === 'monthly' ? Number(form.billing_cycle_days) || 30 : null,
     price_package: form.billing_type === 'package' ? Number(form.price_package) : null,
     package_days: form.billing_type === 'package' ? Number(form.package_days) : null,
     max_services: form.max_services === '' ? null : Number(form.max_services),
@@ -175,6 +178,21 @@ function FeeFields({ form, set }: { form: PlanForm; set: SetForm }) {
   )
 }
 
+/** Rótulo curto do ciclo de cobrança, pros casos mais comuns. */
+function cycleLabel(days: number): string {
+  if (days === 30) return 'mensal'
+  if (days === 90) return 'trimestral'
+  if (days === 180) return 'semestral'
+  if (days === 365) return 'anual'
+  return `a cada ${days} dias`
+}
+
+/** Total cobrado no ciclo, a partir do preço mensal (arredondado ao mês mais próximo). */
+function cycleTotal(priceMonthly: number, days: number): number {
+  const months = Math.max(1, Math.round(days / 30))
+  return priceMonthly * months
+}
+
 /** Texto curto da taxa de um plano por agendamento, para exibição. */
 function feeSummary(plan: Plan): string {
   if (plan.billing_type !== 'por_agendamento' || plan.booking_fee_value == null) return '—'
@@ -194,6 +212,7 @@ function PlanCard({ plan, onSave }: { plan: Plan; onSave: (id: string, updates: 
     description: plan.description ?? '',
     billing_type: plan.billing_type ?? 'monthly',
     price_monthly: plan.price_monthly,
+    billing_cycle_days: plan.billing_cycle_days ?? 30,
     price_package: plan.price_package ?? '',
     package_days: plan.package_days ?? 30,
     max_services: plan.max_services ?? '',
@@ -269,7 +288,7 @@ function PlanCard({ plan, onSave }: { plan: Plan; onSave: (id: string, updates: 
               {plan.billing_type === 'por_agendamento'
                 ? <><Percent size={11} /> Por agendamento</>
                 : (plan.billing_type ?? 'monthly') === 'monthly'
-                  ? <><RefreshCw size={11} /> Mensal</>
+                  ? <><RefreshCw size={11} /> Cobrança {cycleLabel(plan.billing_cycle_days ?? 30)}</>
                   : <><Calendar size={11} /> Pacote {plan.package_days} dias</>
               }
             </span>
@@ -291,9 +310,15 @@ function PlanCard({ plan, onSave }: { plan: Plan; onSave: (id: string, updates: 
           isPerBooking ? (
             <FeeFields form={form} set={set} />
           ) : isMonthly ? (
-            <div>
-              <label className="text-xs font-medium text-gray-500 mb-1 block">Preço mensal (R$)</label>
-              <input type="number" min="0" step="0.01" value={form.price_monthly} onChange={(e) => set('price_monthly', e.target.value)} className={inputCls} placeholder="0.00" />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">Preço mensal (R$)</label>
+                <input type="number" min="0" step="0.01" value={form.price_monthly} onChange={(e) => set('price_monthly', e.target.value)} className={inputCls} placeholder="0.00" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">Ciclo de cobrança (dias)</label>
+                <input type="number" min="1" value={form.billing_cycle_days} onChange={(e) => set('billing_cycle_days', e.target.value)} className={inputCls} placeholder="30" />
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
@@ -317,16 +342,23 @@ function PlanCard({ plan, onSave }: { plan: Plan; onSave: (id: string, updates: 
             </p>
             <p className="text-xs text-gray-400 mt-0.5">{feeSummary(plan)}</p>
           </div>
+        ) : (plan.billing_type ?? 'monthly') === 'monthly' ? (
+          <div>
+            <label className="text-xs font-medium text-gray-500 mb-1 block">Preço mensal</label>
+            <p className="text-lg font-bold text-indigo-600">
+              {plan.price_monthly === 0 ? 'Grátis' : `R$ ${plan.price_monthly.toFixed(2)}/mês`}
+            </p>
+            {plan.price_monthly > 0 && (
+              <p className="text-xs text-gray-400 mt-0.5">
+                Cobrança {cycleLabel(plan.billing_cycle_days ?? 30)} · total do ciclo: R$ {cycleTotal(plan.price_monthly, plan.billing_cycle_days ?? 30).toFixed(2)}
+              </p>
+            )}
+          </div>
         ) : (
           <div>
-            <label className="text-xs font-medium text-gray-500 mb-1 block">
-              {(plan.billing_type ?? 'monthly') === 'monthly' ? 'Preço mensal' : 'Preço do pacote'}
-            </label>
+            <label className="text-xs font-medium text-gray-500 mb-1 block">Preço do pacote</label>
             <p className="text-lg font-bold text-indigo-600">
-              {(plan.billing_type ?? 'monthly') === 'monthly'
-                ? plan.price_monthly === 0 ? 'Grátis' : `R$ ${plan.price_monthly.toFixed(2)}/mês`
-                : plan.price_package === 0 || plan.price_package == null ? 'Grátis' : `R$ ${plan.price_package.toFixed(2)}`
-              }
+              {plan.price_package === 0 || plan.price_package == null ? 'Grátis' : `R$ ${plan.price_package.toFixed(2)}`}
             </p>
           </div>
         )}
@@ -463,9 +495,15 @@ function NewPlanCard({ onCreate }: { onCreate: (data: Omit<Plan, 'id' | 'created
         {isPerBooking ? (
           <FeeFields form={form} set={set} />
         ) : isMonthly ? (
-          <div>
-            <label className="text-xs font-medium text-gray-500 mb-1 block">Preço mensal (R$)</label>
-            <input type="number" min="0" step="0.01" value={form.price_monthly} onChange={(e) => set('price_monthly', e.target.value)} className={inputCls} placeholder="0.00" />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-gray-500 mb-1 block">Preço mensal (R$)</label>
+              <input type="number" min="0" step="0.01" value={form.price_monthly} onChange={(e) => set('price_monthly', e.target.value)} className={inputCls} placeholder="0.00" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-500 mb-1 block">Ciclo de cobrança (dias)</label>
+              <input type="number" min="1" value={form.billing_cycle_days} onChange={(e) => set('billing_cycle_days', e.target.value)} className={inputCls} placeholder="30" />
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">

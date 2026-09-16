@@ -41,7 +41,7 @@ function calcExpiresAt(planId: string, plans: ReturnType<typeof usePlans>['plans
   if (plan.billing_type === 'package' && plan.package_days) {
     now.setDate(now.getDate() + plan.package_days)
   } else {
-    now.setDate(now.getDate() + 30)
+    now.setDate(now.getDate() + (plan.billing_cycle_days ?? 30))
   }
   return now.toISOString()
 }
@@ -116,7 +116,7 @@ export default function SuperAssinaturas() {
                   ? 'Por agendamento · sem validade'
                   : plan.billing_type === 'package' && plan.package_days
                     ? `Expira em Pacote ${plan.package_days}d`
-                    : 'Expira em 30 dias'
+                    : `Expira em ${plan.billing_cycle_days ?? 30} dias`
                 : null
               return (
                 <div key={e.id} className="flex items-center gap-3 flex-wrap">
