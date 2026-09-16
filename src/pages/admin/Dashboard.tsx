@@ -46,6 +46,7 @@ export default function Dashboard() {
   const monthStr = format(new Date(), 'yyyy-MM')
   const { charges: mensalidades } = useMembershipCharges(establishment?.id, monthStr)
   const [newClients, setNewClients] = useState(0)
+  const financeiroEnabled = !!establishment?.financeiro_beta_enabled
 
   const mensalPendentes = mensalidades.filter((c) => c.status === 'pendente')
   const mensalAReceber = mensalPendentes.reduce((s, c) => s + Number(c.amount), 0)
@@ -106,7 +107,7 @@ export default function Dashboard() {
           value={formatCurrency(revenue)}
           icon={<DollarSign size={18} className="text-emerald-600" />}
           color="bg-emerald-50"
-          to="/admin/financeiro"
+          to={financeiroEnabled ? '/admin/financeiro' : undefined}
         />
       </div>
 
@@ -124,9 +125,11 @@ export default function Dashboard() {
                 <p className="text-xs text-gray-400">Controle de recebimentos das turmas</p>
               </div>
             </div>
-            <Link to="/admin/financeiro" className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-dark transition">
-              Gerenciar no Financeiro <ArrowUpRight size={14} />
-            </Link>
+            {financeiroEnabled && (
+              <Link to="/admin/financeiro" className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-dark transition">
+                Gerenciar no Financeiro <ArrowUpRight size={14} />
+              </Link>
+            )}
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>

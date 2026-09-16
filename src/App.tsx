@@ -123,6 +123,24 @@ function HealthFormBetaRoute() {
 }
 
 /**
+ * Financeiro é recurso beta, liberado pelo superadmin (establishments.
+ * financeiro_beta_enabled). Tentativa pela URL direta volta para o Dashboard.
+ */
+function FinanceiroBetaRoute() {
+  const { user } = useAuth()
+  const { establishment, loading } = useEstablishment(user?.id)
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin" />
+      </div>
+    )
+  }
+  if (!establishment?.financeiro_beta_enabled) return <Navigate to="/admin" replace />
+  return <Outlet />
+}
+
+/**
  * Quem é super admin sai da tabela admins, e só dela. Já houve aqui uma lista
  * de e-mails no código como alternativa: além de exigir deploy para mudar quem
  * tem acesso, ela ia junto no bundle que qualquer visitante baixa.
@@ -225,7 +243,9 @@ function AppRoutes() {
           </Route>
           <Route element={<OwnerRoute />}>
             <Route path="profissionais" element={<Profissionais />} />
-            <Route path="financeiro" element={<Financeiro />} />
+            <Route element={<FinanceiroBetaRoute />}>
+              <Route path="financeiro" element={<Financeiro />} />
+            </Route>
             <Route path="configuracoes" element={<Configuracoes />} />
           </Route>
         </Route>

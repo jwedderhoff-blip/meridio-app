@@ -1,7 +1,7 @@
 # Manual do Meridio
 
 > Manual de uso — vivo, atualizado a cada funcionalidade nova do sistema.
-> Última atualização: 2026-09-15 (instruções passo a passo de recibo e fotos)
+> Última atualização: 2026-09-16 (Financeiro virou recurso beta)
 
 ---
 
@@ -96,12 +96,15 @@ Ao clicar em **"Marcar como pago"**, o sistema pergunta a forma de pagamento e s
 
 ---
 
-## 7. Mensalidades e Financeiro
+## 7. Mensalidades e Financeiro — recurso beta 🧪
+
+> Tela **Financeiro** liberada estabelecimento por estabelecimento pelo superadmin, em Super Admin → Estabelecimentos → "Recursos beta" (mesmo controle do Caixa e da Anamnese). Sem o recurso liberado, o item some do menu e a tela não fica acessível pela URL.
 
 - Gerenciadas **pela própria academia**, não pelo superadmin.
 - Tela **Financeiro**: KPIs (recebido, a receber, pagas, avulsos) + tabela de mensalidades com marcar pago/reabrir.
-- No **Dashboard**, um bloco resumo com atalho direto para o Financeiro.
+- No **Dashboard**, um bloco resumo com atalho direto para o Financeiro (só aparece se o recurso estiver liberado).
 - Ao clicar em **"Marcar pago"**, o sistema pede a forma de pagamento e pergunta se quer **emitir o recibo na hora** — o recebimento também passa a aparecer no histórico de movimentações da Frente de Caixa (item 8), mesmo sem o recurso beta liberado.
+- **Marcar mensalidade como paga no cadastro do Cliente** (item 6) continua disponível mesmo com o Financeiro desligado — é um recurso do cadastro do cliente, não da tela Financeiro em si.
 
 ---
 
@@ -177,7 +180,7 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 
 ## 12. Super Admin
 
-- **Estabelecimentos**: lista todos, edita dados, ativa/suspende, libera recursos beta (Caixa, Anamnese)
+- **Estabelecimentos**: lista todos, edita dados, ativa/suspende, libera recursos beta (Caixa, Anamnese, Financeiro)
 - **Entrar no painel**: acessa o painel de qualquer cliente para ajudar a configurar (faixa amarela avisando "Modo Super Admin" enquanto ativo)
 - **Planos e assinaturas**
 - **Cobranças por agendamento** (taxa opcional por reserva confirmada)
@@ -204,3 +207,4 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 | 2026-09-15 | Cada setor do painel agora tem um link "Acessar:" com o caminho direto (ex.: `/admin/agenda`, `/admin/caixa`, `/superadmin/estabelecimentos`) |
 | 2026-09-15 | Ao marcar mensalidade (Financeiro, Clientes) ou serviço avulso (Agenda) como pago, o sistema pergunta a forma de pagamento e se quer emitir o recibo na hora — o recebimento passa a aparecer também no histórico da Frente de Caixa |
 | 2026-09-15 | Removidos os links "Acessar:" de cada seção (a pedido) |
+| 2026-09-16 | Financeiro virou recurso beta, mesmo padrão do Caixa e da Anamnese — liberado estabelecimento por estabelecimento pelo superadmin. Como já era usado em produção, a migração desliga o acesso para todo mundo, inclusive quem já usava |

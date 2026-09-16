@@ -129,6 +129,16 @@ Hooks disponíveis:
 beta, fora do fluxo padrão (agendamento + vagas/turmas). Liberado manualmente pelo
 superadmin em Super Admin → Estabelecimentos → editar → "Recursos beta".
 
+`establishments.financeiro_beta_enabled` (bool, default false) — tela Financeiro
+(mensalidades e relatórios) também virou recurso beta (2026-09-16), mesmo padrão do
+Caixa. Como já era usada em produção, a migration desliga para todos os
+estabelecimentos existentes — precisa liberar de novo em Super Admin →
+Estabelecimentos → "Recursos beta" para quem já usava. Rota `/admin/financeiro`
+gateada por `FinanceiroBetaRoute` em `src/App.tsx` (dentro do `OwnerRoute`, então
+exige dono **e** beta liberado); item de nav em `AdminLayout.tsx` some se a flag
+estiver desligada; atalhos do Dashboard para o Financeiro só aparecem com a flag
+ligada.
+
 ## Auditoria de segurança (2026-09-14)
 
 Achado crítico: `establishments`, `professionals`, `professional_services`,

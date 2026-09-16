@@ -27,6 +27,8 @@ export interface Establishment {
   cash_beta_enabled?: boolean
   /** Recurso beta: ficha de anamnese. Liberado manualmente pelo superadmin em cadastros de teste. */
   health_form_beta_enabled?: boolean
+  /** Recurso beta: relatórios financeiros. Liberado manualmente pelo superadmin em cadastros de teste. */
+  financeiro_beta_enabled?: boolean
   created_at: string
 }
 

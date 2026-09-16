@@ -47,6 +47,7 @@ export interface SuperEstablishment {
   segment?: Segment | null
   cash_beta_enabled?: boolean
   health_form_beta_enabled?: boolean
+  financeiro_beta_enabled?: boolean
   created_at: string
   subscriptions?: {
     status: string
@@ -160,7 +161,7 @@ export function useAllEstablishments() {
   const fetch = async () => {
     const { data } = await supabase
       .from('establishments')
-      .select('id, name, category, segment, status, email, phone, slug, address, cash_beta_enabled, health_form_beta_enabled, created_at, subscriptions(status, plans(name, max_services, max_professionals))')
+      .select('id, name, category, segment, status, email, phone, slug, address, cash_beta_enabled, health_form_beta_enabled, financeiro_beta_enabled, created_at, subscriptions(status, plans(name, max_services, max_professionals))')
       .order('created_at', { ascending: false })
 
     // Contagens de profissionais/serviços por estabelecimento. A função
