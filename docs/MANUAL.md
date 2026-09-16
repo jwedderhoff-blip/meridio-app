@@ -1,7 +1,7 @@
 # Manual do Meridio
 
 > Manual de uso — vivo, atualizado a cada funcionalidade nova do sistema.
-> Última atualização: 2026-09-16 (ciclo de cobrança dos planos)
+> Última atualização: 2026-09-16 (data de início editável e contrato de assinatura)
 
 ---
 
@@ -183,6 +183,8 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 - **Estabelecimentos**: lista todos, edita dados, ativa/suspende, libera recursos beta (Caixa, Anamnese, Financeiro)
 - **Entrar no painel**: acessa o painel de qualquer cliente para ajudar a configurar (faixa amarela avisando "Modo Super Admin" enquanto ativo)
 - **Planos e assinaturas**: o app não cobra automaticamente — você cobra manualmente (Pix, etc.) e controla o acesso/validade aqui. Um plano "Mensal" tem um **ciclo de cobrança** configurável (30, 90, 180 dias...): o preço cadastrado é sempre **por mês**, e a tela mostra o total do ciclo (ex.: R$ 42,90/mês, cobrança trimestral, total R$ 128,70). Ao atribuir o plano a um estabelecimento, a validade já soma automaticamente os dias do ciclo escolhido
+  - **Data de início editável**: clique na data em "Início" para mudar — o "Vencimento" é recalculado automaticamente a partir da nova data, seguindo o ciclo do plano contratado
+  - **Contrato**: ícone de documento na lista de assinaturas gera um contrato de prestação de serviços simples, pronto pra imprimir/PDF, com os dados do estabelecimento e do plano (valor, ciclo, vigência, limites). É um modelo padrão — vale revisão de um advogado antes de usar formalmente com clientes
 - **Cobranças por agendamento** (taxa opcional por reserva confirmada)
 - **Notificações**: histórico de notificações enviadas
 
@@ -209,3 +211,4 @@ Status visível direto no cadastro do cliente (selo "Anamnese OK" / "Anamnese pe
 | 2026-09-15 | Removidos os links "Acessar:" de cada seção (a pedido) |
 | 2026-09-16 | Financeiro virou recurso beta, mesmo padrão do Caixa e da Anamnese — liberado estabelecimento por estabelecimento pelo superadmin. Como já era usado em produção, a migração desliga o acesso para todo mundo, inclusive quem já usava |
 | 2026-09-16 | Planos "Mensal" ganharam um ciclo de cobrança configurável (30/90/180 dias...) em vez de assumir sempre 30 dias — a tela de Planos mostra o total do ciclo, e a validade calculada ao atribuir um plano a um estabelecimento agora respeita esse ciclo |
+| 2026-09-16 | Em Assinaturas, a data de início virou editável (recalcula o vencimento pelo ciclo do plano) e foi adicionado um gerador de contrato de prestação de serviços por assinatura |
