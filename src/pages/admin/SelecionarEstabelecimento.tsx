@@ -1,15 +1,17 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useEstablishments } from '../../hooks/useEstablishments'
 import { setSelectedEstablishmentId } from '../../hooks/useEstablishment'
 import { CATEGORY_LABELS, CATEGORY_ICONS } from '../../lib/segments'
+import { supabase } from '../../lib/supabase'
 
 export default function SelecionarEstabelecimento() {
   const { user } = useAuth()
   const { establishments, hasOwned, loading } = useEstablishments(user?.id)
   const navigate = useNavigate()
+  const [checkingAdmin, setCheckingAdmin] = useState(true)
 
   const select = (id: string) => {
     setSelectedEstablishmentId(id)
@@ -25,7 +27,26 @@ export default function SelecionarEstabelecimento() {
     }
   }, [loading, establishments, navigate])
 
-  if (loading || establishments.length === 1) {
+  // Login não é dono nem visualizador de nenhum estabelecimento — antes de
+  // mostrar "sem acesso", confere se é um login de superadmin (que pode não
+  // ter estabelecimento próprio algum) e manda direto pro painel dele.
+  useEffect(() => {
+    if (loading || establishments.length > 0 || !user) { setCheckingAdmin(false); return }
+    let cancelled = false
+    supabase
+      .from('admins')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled) return
+        if (data) { navigate('/superadmin', { replace: true }); return }
+        setCheckingAdmin(false)
+      })
+    return () => { cancelled = true }
+  }, [loading, establishments, user, navigate])
+
+  if (loading || establishments.length === 1 || (establishments.length === 0 && checkingAdmin)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin" />
